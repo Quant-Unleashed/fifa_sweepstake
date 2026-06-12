@@ -53,6 +53,7 @@ def test_enriched_team_has_money_fields():
     assert "confirmed_payout" in team
     assert "possible_payout" in team
     assert "expected_value" in team
+    assert "flag" in team
     assert team["expected_value"] == 1
 
 

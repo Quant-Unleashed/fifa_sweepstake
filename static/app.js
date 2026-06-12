@@ -33,7 +33,7 @@ function renderSummary() {
   const activeTeams = dashboard.teams.filter((team) => team.status === "active").length;
   const items = [
     ["Pot", currency.format(totalInvested)],
-    ["Confirmed paid out", currency.format(totalConfirmed)],
+    ["Actual won", currency.format(totalConfirmed)],
     ["Combined EV", currency.format(totalEv)],
     ["Teams alive", `${activeTeams}/48`],
   ];
@@ -46,15 +46,22 @@ function renderPlayers() {
   document.querySelector("#players").innerHTML = dashboard.players
     .map((player) => {
       const chips = player.teams
-        .map((team) => `<span class="chip ${team.status === "eliminated" ? "eliminated" : ""}">${team.name}</span>`)
+        .map((team) => `<span class="chip ${team.status === "eliminated" ? "eliminated" : ""}">${team.flag} ${team.name}</span>`)
         .join("");
       return `
         <article class="player-card">
-          <h3>${player.name}</h3>
+          <div class="player-title">
+            <h3>${player.name}</h3>
+            <span>${player.team_count} teams</span>
+          </div>
           <div class="money-line">
             ${miniStat("Invested", currency.format(player.invested))}
-            ${miniStat("Confirmed", currency.format(player.confirmed_winnings))}
+            ${miniStat("Actual won", currency.format(player.confirmed_winnings))}
             ${miniStat("EV", currency.format(player.expected_value))}
+          </div>
+          <div class="money-line two">
+            ${miniStat("Actual net", signedMoney(player.actual_profit))}
+            ${miniStat("EV net", signedMoney(player.ev_profit))}
           </div>
           <p><strong>${player.active_count}</strong> active, <strong>${player.eliminated_count}</strong> eliminated</p>
           <div class="team-chips">${chips}</div>
@@ -107,10 +114,10 @@ function renderMatches() {
       <tr>
         <td>${match.date || ""}</td>
         <td>${stageLabel(match.stage)}</td>
-        <td><strong>${match.home_team}</strong><br><span class="muted">vs ${match.away_team}</span></td>
+        <td><strong>${teamLabel(match.home_team)}</strong><br><span class="muted">vs ${teamLabel(match.away_team)}</span></td>
         <td>${score(match)}</td>
         <td><span class="status ${match.status}">${match.status}</span></td>
-        <td>${probabilityCell(match.home_probability, match.home_team)}<br>${probabilityCell(match.away_probability, match.away_team)}</td>
+        <td>${probabilityCell(match.home_probability, teamLabel(match.home_team))}<br>${probabilityCell(match.away_probability, teamLabel(match.away_team))}</td>
       </tr>
     `);
   document.querySelector("#matches").innerHTML = rows.join("") || `<tr><td colspan="6">No matches found.</td></tr>`;
@@ -122,7 +129,7 @@ function renderTeams() {
     .sort((a, b) => a.owner.localeCompare(b.owner) || a.name.localeCompare(b.name))
     .map((team) => `
       <tr>
-        <td><strong>${team.name}</strong></td>
+        <td><strong>${team.flag} ${team.name}</strong></td>
         <td>${team.owner}</td>
         <td>${team.group}</td>
         <td><span class="status ${team.status}">${team.status}</span>${team.exit_stage ? `<br><span class="muted">${stageLabel(team.exit_stage)}</span>` : ""}</td>
@@ -144,6 +151,18 @@ function populateFilters() {
 function probabilityCell(value, label) {
   const safeValue = Number(value || 0);
   return `<span class="muted">${label ? `${label} ` : ""}${percent.format(safeValue)}</span><div class="prob-bar"><span style="width:${safeValue * 100}%"></span></div>`;
+}
+
+function teamLabel(name) {
+  const flag = dashboard.team_flags?.[name] || "";
+  return `${flag ? `${flag} ` : ""}${name}`;
+}
+
+function signedMoney(value) {
+  const amount = currency.format(Math.abs(value));
+  if (value > 0) return `+${amount}`;
+  if (value < 0) return `-${amount}`;
+  return currency.format(0);
 }
 
 function score(match) {

@@ -11,6 +11,7 @@ def test_dashboard_loads():
     assert payload["settings"]["title"] == "Welcome to Aman's FIFA Sweepstake"
     assert len(payload["players"]) == 4
     assert len(payload["teams"]) == 48
+    assert payload["team_flags"]["Argentina"] == "🇦🇷"
 
 
 def test_admin_route_requires_password():
