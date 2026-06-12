@@ -89,8 +89,10 @@ def merge_football_data_matches(state: dict, api_matches: list[dict], persist: b
     local_matches = state["matches"]
     updated = 0
     for api_match in api_matches:
-        home = canonical_name(api_match.get("homeTeam", {}).get("name", ""))
-        away = canonical_name(api_match.get("awayTeam", {}).get("name", ""))
+        home = canonical_name(team_name(api_match, "homeTeam"))
+        away = canonical_name(team_name(api_match, "awayTeam"))
+        if not home or not away:
+            continue
         local = find_local_match(local_matches, home, away)
         if not local:
             continue
@@ -122,7 +124,14 @@ def find_local_match(matches: list[dict], home: str, away: str) -> dict | None:
     return None
 
 
-def canonical_name(name: str) -> str:
+def team_name(api_match: dict, side: str) -> str | None:
+    team = api_match.get(side) or {}
+    return team.get("name")
+
+
+def canonical_name(name: str | None) -> str:
+    if not name:
+        return ""
     value = (
         name.lower()
         .replace("fc", "")
