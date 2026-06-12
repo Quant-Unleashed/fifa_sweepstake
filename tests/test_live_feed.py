@@ -47,3 +47,29 @@ def test_football_data_merge_handles_common_name_aliases():
     ]
 
     assert merge_football_data_matches(state, api_matches, persist=False) == 1
+
+
+def test_football_data_merge_skips_null_team_names():
+    state = {
+        "matches": deepcopy(initial_matches()),
+        "teams": initial_teams(),
+        "settings": SETTINGS,
+    }
+    api_matches = [
+        {
+            "utcDate": "2026-07-04T19:00:00Z",
+            "status": "SCHEDULED",
+            "homeTeam": {"name": None},
+            "awayTeam": {"name": "France"},
+            "score": {"fullTime": {"home": None, "away": None}},
+        },
+        {
+            "utcDate": "2026-07-05T19:00:00Z",
+            "status": "SCHEDULED",
+            "homeTeam": None,
+            "awayTeam": {"name": None},
+            "score": {"fullTime": {"home": None, "away": None}},
+        },
+    ]
+
+    assert merge_football_data_matches(state, api_matches, persist=False) == 0
