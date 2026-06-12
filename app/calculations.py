@@ -14,6 +14,57 @@ TERMINAL_STAGES = {
 
 ACTIVE_STATUS = "active"
 
+TEAM_FLAGS = {
+    "Algeria": "🇩🇿",
+    "Argentina": "🇦🇷",
+    "Australia": "🇦🇺",
+    "Austria": "🇦🇹",
+    "Belgium": "🇧🇪",
+    "Bosnia and Herzegovina": "🇧🇦",
+    "Brazil": "🇧🇷",
+    "Canada": "🇨🇦",
+    "Cape Verde": "🇨🇻",
+    "Colombia": "🇨🇴",
+    "Congo DR": "🇨🇩",
+    "Cote d'Ivoire": "🇨🇮",
+    "Croatia": "🇭🇷",
+    "Curacao": "🇨🇼",
+    "Czechia": "🇨🇿",
+    "Ecuador": "🇪🇨",
+    "Egypt": "🇪🇬",
+    "England": "🏴",
+    "France": "🇫🇷",
+    "Germany": "🇩🇪",
+    "Ghana": "🇬🇭",
+    "Haiti": "🇭🇹",
+    "Iran": "🇮🇷",
+    "Iraq": "🇮🇶",
+    "Japan": "🇯🇵",
+    "Jordan": "🇯🇴",
+    "Mexico": "🇲🇽",
+    "Morocco": "🇲🇦",
+    "Netherlands": "🇳🇱",
+    "New Zealand": "🇳🇿",
+    "Norway": "🇳🇴",
+    "Panama": "🇵🇦",
+    "Paraguay": "🇵🇾",
+    "Portugal": "🇵🇹",
+    "Qatar": "🇶🇦",
+    "Saudi Arabia": "🇸🇦",
+    "Scotland": "🏴",
+    "Senegal": "🇸🇳",
+    "South Africa": "🇿🇦",
+    "South Korea": "🇰🇷",
+    "Spain": "🇪🇸",
+    "Sweden": "🇸🇪",
+    "Switzerland": "🇨🇭",
+    "Tunisia": "🇹🇳",
+    "Turkiye": "🇹🇷",
+    "United States": "🇺🇸",
+    "Uruguay": "🇺🇾",
+    "Uzbekistan": "🇺🇿",
+}
+
 
 def money(value: float) -> float:
     return round(float(value), 2)
@@ -30,6 +81,12 @@ def possible_payout(team: dict, settings: dict) -> float:
     if team.get("status") == "eliminated":
         return payout_for_team(team, settings)
     return money(settings["payouts"]["winner"])
+
+
+def flag_for(team_name: str | None) -> str:
+    if not team_name:
+        return ""
+    return TEAM_FLAGS.get(team_name, "")
 
 
 def title_probabilities(teams: list[dict]) -> dict[str, float]:
@@ -86,6 +143,7 @@ def enrich_teams(teams: list[dict], settings: dict) -> list[dict]:
         copy["confirmed_payout"] = payout_for_team(team, settings)
         copy["possible_payout"] = possible_payout(team, settings)
         copy["expected_value"] = expected_value_for_team(team, settings, probabilities, remaining_pool)
+        copy["flag"] = flag_for(team["name"])
         enriched.append(copy)
     return enriched
 
@@ -107,6 +165,8 @@ def player_summaries(teams: list[dict], settings: dict) -> list[dict]:
                 "invested": money(len(owned) * settings["stake_per_team"]),
                 "confirmed_winnings": money(sum(team["confirmed_payout"] for team in owned)),
                 "expected_value": money(sum(team["expected_value"] for team in owned)),
+                "actual_profit": money(sum(team["confirmed_payout"] for team in owned) - len(owned) * settings["stake_per_team"]),
+                "ev_profit": money(sum(team["expected_value"] for team in owned) - len(owned) * settings["stake_per_team"]),
                 "active_count": len(active),
                 "eliminated_count": len(owned) - len(active),
                 "teams": owned,
@@ -164,6 +224,7 @@ def rebuild_alerts(matches: list[dict], teams: list[dict], settings: dict) -> li
 
 def dashboard_payload(state: dict) -> dict:
     teams = enrich_teams(state["teams"], state["settings"])
+    team_flags = {team["name"]: team["flag"] for team in teams}
     return {
         "settings": state["settings"],
         "players": player_summaries(state["teams"], state["settings"]),
@@ -171,4 +232,5 @@ def dashboard_payload(state: dict) -> dict:
         "matches": state["matches"],
         "alerts": state["alerts"],
         "cache": state["cache"],
+        "team_flags": team_flags,
     }

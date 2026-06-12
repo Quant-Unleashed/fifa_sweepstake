@@ -61,7 +61,7 @@ function renderMatches() {
   document.querySelector("#adminMatches").innerHTML = dashboard.matches
     .map((match) => `
       <article class="admin-row">
-        <h3>${match.date} - ${match.home_team} vs ${match.away_team}</h3>
+        <h3>${match.date} - ${teamLabel(match.home_team)} vs ${teamLabel(match.away_team)}</h3>
         <form data-match-id="${match.id}">
           <input name="home_score" type="number" placeholder="Home" value="${match.home_score ?? ""}" />
           <input name="away_score" type="number" placeholder="Away" value="${match.away_score ?? ""}" />
@@ -89,7 +89,7 @@ function renderTeams() {
     .sort((a, b) => a.owner.localeCompare(b.owner) || a.name.localeCompare(b.name))
     .map((team) => `
       <article class="admin-row">
-        <h3>${team.name} <span class="muted">${team.owner}</span></h3>
+        <h3>${team.flag} ${team.name} <span class="muted">${team.owner}</span></h3>
         <form data-team-id="${team.id}">
           <select name="status">
             ${option("active", team.status)}
@@ -188,6 +188,11 @@ function option(value, selected, label = value) {
 
 function setStatus(message) {
   statusEl.textContent = message || "";
+}
+
+function teamLabel(name) {
+  const flag = dashboard.team_flags?.[name] || "";
+  return `${flag ? `${flag} ` : ""}${name}`;
 }
 
 if (password) {
