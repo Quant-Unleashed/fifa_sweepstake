@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin - FIFA Sweepstake</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Admin</p>
+        <h1>Sweepstake control room</h1>
+      </div>
+      <a class="admin-link" href="/">Dashboard</a>
+    </header>
+
+    <main>
+      <section class="admin-login" id="loginPanel">
+        <div>
+          <h2>Admin password</h2>
+          <p>Use the Render `ADMIN_PASSWORD`. Local default is `change-me`.</p>
+        </div>
+        <form id="loginForm" class="inline-form">
+          <input id="passwordInput" type="password" placeholder="Password" autocomplete="current-password" />
+          <button type="submit">Unlock</button>
+        </form>
+      </section>
+
+      <section class="admin-actions hidden" id="adminActions">
+        <button id="syncButton" type="button">Sync live feed</button>
+        <button id="exportButton" type="button">Export backup</button>
+        <label class="import-label">
+          Import backup
+          <input id="importInput" type="file" accept="application/json" />
+        </label>
+        <span id="adminStatus"></span>
+      </section>
+
+      <section class="hidden" id="adminContent">
+        <div class="section-heading">
+          <h2>Update matches</h2>
+          <p>Mark finished matches, set scores, winners, and probabilities.</p>
+        </div>
+        <div id="adminMatches" class="admin-list"></div>
+
+        <div class="section-heading">
+          <h2>Update teams</h2>
+          <p>Set eliminations and optional title probabilities.</p>
+        </div>
+        <div id="adminTeams" class="admin-list compact"></div>
+
+        <div class="section-heading">
+          <h2>WhatsApp text</h2>
+          <p>Copy match-impact messages into your group chat.</p>
+        </div>
+        <div id="adminAlerts" class="alert-list"></div>
+      </section>
+    </main>
+
+    <script src="/static/admin.js"></script>
+  </body>
+</html>

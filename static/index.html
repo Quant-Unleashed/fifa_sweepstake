@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Aman's FIFA Sweepstake</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">FIFA World Cup 2026</p>
+        <h1>Welcome to Aman's FIFA Sweepstake</h1>
+      </div>
+      <a class="admin-link" href="/admin">Admin</a>
+    </header>
+
+    <main>
+      <section class="summary-bar" id="summaryBar"></section>
+
+      <section>
+        <div class="section-heading">
+          <h2>Players</h2>
+          <p>Money invested, confirmed winnings, expected value, and teams still alive.</p>
+        </div>
+        <div class="player-grid" id="players"></div>
+      </section>
+
+      <section class="two-column">
+        <div>
+          <div class="section-heading">
+            <h2>Latest impact</h2>
+            <p>Match-finish summaries you can copy into WhatsApp from admin.</p>
+          </div>
+          <div id="alerts" class="alert-list"></div>
+        </div>
+        <div>
+          <div class="section-heading">
+            <h2>Rules</h2>
+            <p>£1 per team. Payouts start once a team reaches the Round of 16.</p>
+          </div>
+          <div class="rules" id="rules"></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-heading controls-heading">
+          <div>
+            <h2>Schedule and results</h2>
+            <p>Filter by owner, team, or stage.</p>
+          </div>
+          <div class="filters">
+            <select id="ownerFilter" aria-label="Owner filter">
+              <option value="">All owners</option>
+            </select>
+            <select id="stageFilter" aria-label="Stage filter">
+              <option value="">All stages</option>
+            </select>
+            <input id="matchSearch" type="search" placeholder="Search team" />
+          </div>
+        </div>
+        <div class="table-shell">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Stage</th>
+                <th>Match</th>
+                <th>Score</th>
+                <th>Status</th>
+                <th>Prob.</th>
+              </tr>
+            </thead>
+            <tbody id="matches"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-heading">
+          <h2>Teams</h2>
+          <p>Ownership, status, title probability, confirmed payout, and best possible payout.</p>
+        </div>
+        <div class="table-shell">
+          <table>
+            <thead>
+              <tr>
+                <th>Team</th>
+                <th>Owner</th>
+                <th>Group</th>
+                <th>Status</th>
+                <th>Title prob.</th>
+                <th>Confirmed</th>
+                <th>Max</th>
+              </tr>
+            </thead>
+            <tbody id="teams"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
