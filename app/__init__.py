@@ -1,0 +1,1 @@
+"""FIFA sweepstake app."""

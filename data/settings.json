@@ -1,0 +1,15 @@
+{
+  "title": "Welcome to Aman's FIFA Sweepstake",
+  "stake_per_team": 1,
+  "currency": "GBP",
+  "sync_interval_minutes": 10,
+  "payouts": {
+    "group_stage": 0,
+    "round_of_32": 0,
+    "round_of_16": 1,
+    "quarterfinal": 2,
+    "semifinal": 4,
+    "runner_up": 8,
+    "winner": 16
+  }
+}
