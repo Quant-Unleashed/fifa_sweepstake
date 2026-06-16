@@ -426,6 +426,15 @@ tr:last-child td {
   color: var(--red);
 }
 
+.status.needs-result {
+  background: #fff2ce;
+  color: #8a5d00;
+}
+
+tr.needs-result td {
+  background: #fffaf0;
+}
+
 .prob-bar {
   width: 120px;
   height: 8px;

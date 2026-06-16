@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
 TERMINAL_STAGES = {
@@ -295,6 +295,9 @@ def rebuild_alerts(matches: list[dict], teams: list[dict], settings: dict) -> li
 
 
 def group_standings(matches: list[dict], teams: list[dict]) -> list[dict]:
+    # FIFA group ordering starts with points, goal difference, then goals scored.
+    # Later tie-breakers such as head-to-head and fair-play are not available in v1 data,
+    # so seed rank and original group position are only display-stable fallbacks.
     team_lookup = {team["name"]: team for team in teams}
     rows = {
         team["name"]: {
@@ -348,8 +351,17 @@ def group_standings(matches: list[dict], teams: list[dict]) -> list[dict]:
         )
         for position, row in enumerate(group_rows, start=1):
             row["position"] = position
+            row["qualification"] = qualification_label(position)
         ordered.extend(group_rows)
     return ordered
+
+
+def qualification_label(position: int) -> str:
+    if position <= 2:
+        return "Advancing"
+    if position == 3:
+        return "Third-place race"
+    return "At risk"
 
 
 def apply_group_result(row: dict, goals_for: int, goals_against: int) -> None:
@@ -420,9 +432,12 @@ def chronological_matches(matches: list[dict]) -> list[dict]:
 def match_sort_key(match: dict) -> datetime:
     value = match.get("date") or "9999-12-31"
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
     except ValueError:
-        return datetime.fromisoformat(f"{value}T12:00:00+00:00")
+        parsed = datetime.fromisoformat(f"{value}T12:00:00+00:00")
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed
 
 
 def format_bst(value: str | None) -> str:
@@ -434,8 +449,19 @@ def format_bst(value: str | None) -> str:
         parsed = parsed.replace(tzinfo=ZoneInfo("UTC"))
     local = parsed.astimezone(LONDON_TZ)
     if not has_time:
-        return local.strftime("%d %b %Y")
+        return local.strftime("%d %b %Y, time TBC BST")
     return local.strftime("%d %b %Y, %H:%M BST")
+
+
+def needs_result(match: dict) -> bool:
+    if match.get("status") in {"finished", "live"}:
+        return False
+    if match.get("home_score") is not None and match.get("away_score") is not None:
+        return False
+    parsed = match_sort_key(match)
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed < datetime.now(timezone.utc)
 
 
 def knockout_draw(matches: list[dict]) -> list[dict]:
@@ -452,6 +478,7 @@ def knockout_draw(matches: list[dict]) -> list[dict]:
                         {
                             **match,
                             "display_date": format_bst(match.get("date")),
+                            "needs_result": needs_result(match),
                             "home_flag": flag_for(match.get("home_team")),
                             "away_flag": flag_for(match.get("away_team")),
                         }
@@ -478,6 +505,7 @@ def dashboard_payload(state: dict) -> dict:
             {
                 **match,
                 "display_date": format_bst(match.get("date")),
+                "needs_result": needs_result(match),
                 "home_flag": flag_for(match.get("home_team")),
                 "away_flag": flag_for(match.get("away_team")),
             }

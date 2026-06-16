@@ -100,7 +100,8 @@ def merge_football_data_matches(state: dict, api_matches: list[dict], persist: b
         score = api_match.get("score", {}).get("fullTime", {})
         status = api_match.get("status", "SCHEDULED")
         local["status"] = map_status(status)
-        local["date"] = (api_match.get("utcDate") or local.get("date") or "")[:10]
+        local["date"] = api_match.get("utcDate") or local.get("date") or ""
+        local["location"] = match_location(api_match) or local.get("location") or ""
         local["source"] = "football-data"
         local["home_score"] = score.get("home") if score.get("home") is not None else local.get("home_score")
         local["away_score"] = score.get("away") if score.get("away") is not None else local.get("away_score")
@@ -127,6 +128,16 @@ def find_local_match(matches: list[dict], home: str, away: str) -> dict | None:
 def team_name(api_match: dict, side: str) -> str | None:
     team = api_match.get(side) or {}
     return team.get("name")
+
+
+def match_location(api_match: dict) -> str:
+    venue = api_match.get("venue")
+    if isinstance(venue, str):
+        return venue
+    if isinstance(venue, dict):
+        parts = [venue.get("name"), venue.get("city")]
+        return ", ".join(part for part in parts if part)
+    return api_match.get("stadium") or ""
 
 
 def canonical_name(name: str | None) -> str:
