@@ -16,6 +16,7 @@ def test_football_data_merge_updates_matching_result():
             "status": "FINISHED",
             "homeTeam": {"name": "Mexico"},
             "awayTeam": {"name": "South Africa"},
+            "venue": {"name": "Estadio Azteca", "city": "Mexico City"},
             "score": {"fullTime": {"home": 2, "away": 1}},
         }
     ]
@@ -28,6 +29,8 @@ def test_football_data_merge_updates_matching_result():
     assert match["home_score"] == 2
     assert match["away_score"] == 1
     assert match["winner"] == "Mexico"
+    assert match["date"] == "2026-06-11T19:00:00Z"
+    assert match["location"] == "Estadio Azteca, Mexico City"
 
 
 def test_football_data_merge_handles_common_name_aliases():

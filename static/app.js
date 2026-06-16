@@ -123,18 +123,19 @@ function renderMatches() {
   const rows = dashboard.matches
     .filter((match) => !stage || match.stage === stage)
     .filter((match) => !owner || ownerTeams.has(match.home_team) || ownerTeams.has(match.away_team))
-    .filter((match) => !query || match.home_team.toLowerCase().includes(query) || match.away_team.toLowerCase().includes(query))
+    .filter((match) => !query || String(match.home_team).toLowerCase().includes(query) || String(match.away_team).toLowerCase().includes(query))
     .map((match) => `
-      <tr>
+      <tr class="${match.needs_result ? "needs-result" : ""}">
         <td>${match.display_date || match.date || ""}</td>
         <td>${stageLabel(match.stage)}</td>
         <td><strong>${teamLabel(match.home_team)}</strong><br><span class="muted">vs ${teamLabel(match.away_team)}</span></td>
+        <td>${match.location || "TBC"}</td>
         <td>${score(match)}</td>
-        <td><span class="status ${match.status}">${match.status}</span></td>
+        <td>${statusBadge(match)}</td>
         <td>${probabilityCell(match.home_probability, teamLabel(match.home_team))}<br>${probabilityCell(match.away_probability, teamLabel(match.away_team))}</td>
       </tr>
     `);
-  document.querySelector("#matches").innerHTML = rows.join("") || `<tr><td colspan="6">No matches found.</td></tr>`;
+  document.querySelector("#matches").innerHTML = rows.join("") || `<tr><td colspan="7">No matches found.</td></tr>`;
 }
 
 function renderTeams() {
@@ -182,6 +183,7 @@ function standingsTable(group) {
             <th>GA</th>
             <th>GD</th>
             <th>Pts</th>
+            <th>Path</th>
             <th>Surv.</th>
           </tr>
         </thead>
@@ -198,6 +200,7 @@ function standingsTable(group) {
               <td>${row.ga}</td>
               <td>${signedNumber(row.gd)}</td>
               <td><strong>${row.points}</strong></td>
+              <td><span class="status">${row.qualification}</span></td>
               <td>${percent.format(teamByName(row.team)?.survival_probability || 0)}</td>
             </tr>
           `).join("")}
@@ -267,6 +270,13 @@ function teamByName(name) {
 function score(match) {
   if (match.home_score === null || match.away_score === null) return "-";
   return `${match.home_score} - ${match.away_score}`;
+}
+
+function statusBadge(match) {
+  if (match.needs_result) {
+    return `<span class="status needs-result">Needs result</span>`;
+  }
+  return `<span class="status ${match.status}">${match.status}</span>`;
 }
 
 function stageLabel(stage) {

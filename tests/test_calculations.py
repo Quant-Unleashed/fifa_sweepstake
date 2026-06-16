@@ -96,6 +96,7 @@ def test_group_standings_include_points_goal_difference_and_position():
     assert mexico["points"] == 3
     assert mexico["gd"] == 2
     assert mexico["position"] == 1
+    assert mexico["qualification"] == "Advancing"
     assert south_africa["lost"] == 1
 
 
@@ -110,7 +111,24 @@ def test_dashboard_payload_adds_bst_schedule_standings_and_draw():
         }
     )
     assert payload["probability_model"]["id"] == "rank_performance"
-    assert payload["matches"][0]["display_date"]
+    assert "BST" in payload["matches"][0]["display_date"]
+    assert payload["matches"][0]["needs_result"] is True
     assert payload["matches"] == sorted(payload["matches"], key=lambda item: (item["date"], item["id"]))
     assert len(payload["standings"]) == 48
     assert payload["knockout_draw"][0]["stage"] == "round_of_32"
+
+
+def test_dashboard_payload_formats_full_utc_kickoff_in_bst():
+    matches = initial_matches()
+    matches[0]["date"] = "2026-06-11T19:00:00Z"
+    payload = dashboard_payload(
+        {
+            "teams": initial_teams(),
+            "matches": matches,
+            "settings": SETTINGS,
+            "cache": initial_cache(),
+            "alerts": [],
+        }
+    )
+    match = next(item for item in payload["matches"] if item["home_team"] == matches[0]["home_team"] and item["away_team"] == matches[0]["away_team"])
+    assert match["display_date"] == "11 Jun 2026, 20:00 BST"
