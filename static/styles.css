@@ -131,7 +131,10 @@ section {
 .admin-login,
 .admin-actions,
 .alert-card,
-.admin-row {
+.admin-row,
+.model-strip,
+.standings-card,
+.draw-round {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -146,6 +149,29 @@ section {
   display: block;
   margin-top: 4px;
   font-size: 1.45rem;
+}
+
+.model-strip {
+  padding: 16px;
+}
+
+.model-strip span,
+.draw-match span {
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.model-strip strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.15rem;
+}
+
+.model-strip p {
+  margin: 6px 0 0;
+  color: var(--muted);
 }
 
 .player-grid {
@@ -258,6 +284,92 @@ td .muted {
 .alert-card p {
   margin-bottom: 0;
   color: var(--muted);
+}
+
+.tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #eef3ed;
+}
+
+.tab-button {
+  background: transparent;
+  color: var(--ink);
+}
+
+.tab-button.active {
+  background: var(--green);
+  color: #fff;
+}
+
+.standings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.standings-card {
+  overflow: hidden;
+}
+
+.standings-card h3,
+.draw-round h3 {
+  margin: 0;
+  padding: 14px;
+  background: #10251e;
+  color: #f7fbf4;
+}
+
+.compact-table {
+  min-width: 560px;
+  font-size: 0.88rem;
+}
+
+.compact-table th,
+.compact-table td {
+  padding: 8px;
+}
+
+.draw-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(230px, 1fr);
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.draw-round {
+  min-width: 230px;
+  overflow: hidden;
+}
+
+.draw-match {
+  display: grid;
+  gap: 4px;
+  border-bottom: 1px solid var(--line);
+  padding: 12px;
+}
+
+.draw-match:last-child {
+  border-bottom: 0;
+}
+
+.draw-match small {
+  color: var(--muted);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.draw-match em {
+  color: var(--blue);
+  font-style: normal;
+  font-weight: 800;
 }
 
 .table-shell {
@@ -399,6 +511,7 @@ textarea {
   .summary-bar,
   .player-grid,
   .two-column,
+  .standings-grid,
   .admin-list.compact {
     grid-template-columns: 1fr;
   }

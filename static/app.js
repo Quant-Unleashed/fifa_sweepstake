@@ -19,9 +19,12 @@ async function loadDashboard() {
 
 function renderAll() {
   renderSummary();
+  renderModelStrip();
   renderPlayers();
   renderRules();
   renderAlerts();
+  renderStandings();
+  renderKnockoutDraw();
   renderMatches();
   renderTeams();
 }
@@ -75,6 +78,17 @@ function miniStat(label, value) {
   return `<div class="mini-stat"><span>${label}</span><strong>${value}</strong></div>`;
 }
 
+function renderModelStrip() {
+  const model = dashboard.probability_model || {};
+  document.querySelector("#modelStrip").innerHTML = `
+    <div>
+      <span>Probability model</span>
+      <strong>${model.label || "Rank/performance model"}</strong>
+      <p>${model.description || "Uses standings, seed strength, and manual title overrides."}</p>
+    </div>
+  `;
+}
+
 function renderRules() {
   const labels = {
     group_stage: "Group stage exit",
@@ -112,7 +126,7 @@ function renderMatches() {
     .filter((match) => !query || match.home_team.toLowerCase().includes(query) || match.away_team.toLowerCase().includes(query))
     .map((match) => `
       <tr>
-        <td>${match.date || ""}</td>
+        <td>${match.display_date || match.date || ""}</td>
         <td>${stageLabel(match.stage)}</td>
         <td><strong>${teamLabel(match.home_team)}</strong><br><span class="muted">vs ${teamLabel(match.away_team)}</span></td>
         <td>${score(match)}</td>
@@ -133,12 +147,88 @@ function renderTeams() {
         <td>${team.owner}</td>
         <td>${team.group}</td>
         <td><span class="status ${team.status}">${team.status}</span>${team.exit_stage ? `<br><span class="muted">${stageLabel(team.exit_stage)}</span>` : ""}</td>
-        <td>${probabilityCell(team.title_probability, "")}</td>
+        <td>${probabilityCell(team.title_probability, "Title")}<br>${probabilityCell(team.survival_probability, "Survive")}</td>
         <td>${currency.format(team.confirmed_payout)}</td>
         <td>${currency.format(team.possible_payout)}</td>
       </tr>
     `)
     .join("");
+}
+
+function renderStandings() {
+  const groups = [...new Set(dashboard.standings.map((row) => row.group))].sort();
+  document.querySelector("#standingsPanel").innerHTML = `
+    <div class="standings-grid">
+      ${groups.map((group) => standingsTable(group)).join("")}
+    </div>
+  `;
+}
+
+function standingsTable(group) {
+  const rows = dashboard.standings.filter((row) => row.group === group);
+  return `
+    <article class="standings-card">
+      <h3>Group ${group}</h3>
+      <table class="compact-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Team</th>
+            <th>P</th>
+            <th>W</th>
+            <th>D</th>
+            <th>L</th>
+            <th>GF</th>
+            <th>GA</th>
+            <th>GD</th>
+            <th>Pts</th>
+            <th>Surv.</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map((row) => `
+            <tr>
+              <td>${row.position}</td>
+              <td><strong>${row.flag} ${row.team}</strong><br><span class="muted">${row.owner}</span></td>
+              <td>${row.played}</td>
+              <td>${row.won}</td>
+              <td>${row.drawn}</td>
+              <td>${row.lost}</td>
+              <td>${row.gf}</td>
+              <td>${row.ga}</td>
+              <td>${signedNumber(row.gd)}</td>
+              <td><strong>${row.points}</strong></td>
+              <td>${percent.format(teamByName(row.team)?.survival_probability || 0)}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </article>
+  `;
+}
+
+function renderKnockoutDraw() {
+  const rounds = dashboard.knockout_draw || [];
+  document.querySelector("#drawPanel").innerHTML = rounds.length
+    ? `<div class="draw-grid">${rounds.map(drawRound).join("")}</div>`
+    : `<article class="alert-card"><h3>No knockout draw yet</h3><p>Knockout fixtures will appear here once placeholders or live feed data are available.</p></article>`;
+}
+
+function drawRound(round) {
+  return `
+    <article class="draw-round">
+      <h3>${round.label}</h3>
+      ${round.matches.map((match) => `
+        <div class="draw-match">
+          <span>${match.display_date || ""}</span>
+          <strong>${teamLabel(match.home_team)}</strong>
+          <small>vs</small>
+          <strong>${teamLabel(match.away_team)}</strong>
+          <em>${score(match)}</em>
+        </div>
+      `).join("")}
+    </article>
+  `;
 }
 
 function populateFilters() {
@@ -165,6 +255,15 @@ function signedMoney(value) {
   return currency.format(0);
 }
 
+function signedNumber(value) {
+  if (value > 0) return `+${value}`;
+  return String(value);
+}
+
+function teamByName(name) {
+  return dashboard.teams.find((team) => team.name === name);
+}
+
 function score(match) {
   if (match.home_score === null || match.away_score === null) return "-";
   return `${match.home_score} - ${match.away_score}`;
@@ -179,4 +278,11 @@ function stageLabel(stage) {
 document.querySelector("#ownerFilter").addEventListener("change", renderMatches);
 document.querySelector("#stageFilter").addEventListener("change", renderMatches);
 document.querySelector("#matchSearch").addEventListener("input", renderMatches);
+document.querySelectorAll("[data-tab]").forEach((button) => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll("[data-tab]").forEach((tab) => tab.classList.toggle("active", tab === button));
+    document.querySelector("#standingsPanel").classList.toggle("hidden", button.dataset.tab !== "standings");
+    document.querySelector("#drawPanel").classList.toggle("hidden", button.dataset.tab !== "draw");
+  });
+});
 loadDashboard();

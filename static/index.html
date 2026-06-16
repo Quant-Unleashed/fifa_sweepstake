@@ -18,6 +18,8 @@
     <main>
       <section class="summary-bar" id="summaryBar"></section>
 
+      <section class="model-strip" id="modelStrip"></section>
+
       <section>
         <div class="section-heading">
           <h2>Players</h2>
@@ -44,10 +46,23 @@
       </section>
 
       <section>
+        <div class="section-heading">
+          <h2>Tournament view</h2>
+          <p>Group standings first, then the knockout path as the draw fills in.</p>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Tournament views">
+          <button class="tab-button active" type="button" data-tab="standings">Table standings</button>
+          <button class="tab-button" type="button" data-tab="draw">Knockout draw</button>
+        </div>
+        <div id="standingsPanel" class="tab-panel"></div>
+        <div id="drawPanel" class="tab-panel hidden"></div>
+      </section>
+
+      <section>
         <div class="section-heading controls-heading">
           <div>
             <h2>Schedule and results</h2>
-            <p>Filter by owner, team, or stage.</p>
+            <p>All fixtures shown chronologically in British Summer Time.</p>
           </div>
           <div class="filters">
             <select id="ownerFilter" aria-label="Owner filter">
