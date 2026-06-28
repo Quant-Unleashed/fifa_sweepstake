@@ -16,11 +16,23 @@ TERMINAL_STAGES = {
 
 ACTIVE_STATUS = "active"
 LONDON_TZ = ZoneInfo("Europe/London")
+KNOCKOUT_STAGES = ["round_of_32", "round_of_16", "quarterfinal", "semifinal", "third_place", "final"]
+STAGE_PROGRESS = {
+    "group_stage": 0,
+    "round_of_32": 1,
+    "round_of_16": 2,
+    "quarterfinal": 3,
+    "semifinal": 4,
+    "third_place": 4,
+    "runner_up": 5,
+    "final": 5,
+    "winner": 6,
+}
 
 MODEL_CONFIGS = {
     "rank_performance": {
-        "label": "Rank/performance model",
-        "description": "Uses group points, goal difference, goals for, seed rank, and manual title overrides.",
+        "label": "Knockout-adjusted rank/performance model",
+        "description": "Uses confirmed team status, knockout draw position, group performance, seed rank, and manual title overrides.",
     },
     # Placeholder for future experimentation: market odds, Elo/SPI imports, Monte Carlo simulations,
     # or provider-driven probabilities can be added behind this registry without changing the API shape.
@@ -152,7 +164,11 @@ def flag_for(team_name: str | None) -> str:
     return TEAM_FLAGS.get(team_name, "")
 
 
-def title_probabilities(teams: list[dict], standings: list[dict] | None = None) -> dict[str, float]:
+def title_probabilities(
+    teams: list[dict],
+    standings: list[dict] | None = None,
+    matches: list[dict] | None = None,
+) -> dict[str, float]:
     active = [team for team in teams if team.get("status") == ACTIVE_STATUS]
     manual_total = sum(
         float(team.get("manual_title_probability") or 0)
@@ -160,7 +176,7 @@ def title_probabilities(teams: list[dict], standings: list[dict] | None = None) 
     )
     unset = [team for team in active if team.get("manual_title_probability") is None]
     remaining = max(0.0, 1.0 - manual_total)
-    model_weights = rank_performance_weights(unset, standings or [])
+    model_weights = rank_performance_weights(unset, standings or [], matches or [])
     total_weight = sum(model_weights.values())
 
     probabilities: dict[str, float] = {}
@@ -201,9 +217,14 @@ def expected_value_for_team(
     return money(probabilities.get(team["name"], 0.0) * remaining_pool)
 
 
-def enrich_teams(teams: list[dict], settings: dict, standings: list[dict] | None = None) -> list[dict]:
-    probabilities = title_probabilities(teams, standings)
-    survival = survival_probabilities(teams, standings or [])
+def enrich_teams(
+    teams: list[dict],
+    settings: dict,
+    standings: list[dict] | None = None,
+    matches: list[dict] | None = None,
+) -> list[dict]:
+    probabilities = title_probabilities(teams, standings, matches)
+    survival = survival_probabilities(teams, standings or [], matches or [])
     confirmed_total = sum(payout_for_team(team, settings) for team in teams)
     remaining_pool = max(0.0, payout_pool(settings) - confirmed_total)
     enriched = []
@@ -220,8 +241,13 @@ def enrich_teams(teams: list[dict], settings: dict, standings: list[dict] | None
     return enriched
 
 
-def player_summaries(teams: list[dict], settings: dict, standings: list[dict] | None = None) -> list[dict]:
-    enriched = enrich_teams(teams, settings, standings)
+def player_summaries(
+    teams: list[dict],
+    settings: dict,
+    standings: list[dict] | None = None,
+    matches: list[dict] | None = None,
+) -> list[dict]:
+    enriched = enrich_teams(teams, settings, standings, matches)
     by_owner: dict[str, list[dict]] = defaultdict(list)
     for team in enriched:
         by_owner[team["owner"]].append(team)
@@ -378,12 +404,16 @@ def apply_group_result(row: dict, goals_for: int, goals_against: int) -> None:
         row["lost"] += 1
 
 
-def survival_probabilities(teams: list[dict], standings: list[dict]) -> dict[str, float]:
+def survival_probabilities(teams: list[dict], standings: list[dict], matches: list[dict] | None = None) -> dict[str, float]:
     standings_by_team = {row["team"]: row for row in standings}
+    knockout_team_names = teams_in_knockout(matches or [])
     probabilities = {}
     for team in teams:
         if team.get("status") != ACTIVE_STATUS:
             probabilities[team["name"]] = 0.0
+            continue
+        if team["name"] in knockout_team_names:
+            probabilities[team["name"]] = 1.0
             continue
         row = standings_by_team.get(team["name"], {})
         probabilities[team["name"]] = survival_probability(row)
@@ -407,22 +437,61 @@ def survival_probability(row: dict) -> float:
     return max(0.04, min(0.96, round(score, 4)))
 
 
-def rank_performance_weights(teams: list[dict], standings: list[dict]) -> dict[str, float]:
+def rank_performance_weights(teams: list[dict], standings: list[dict], matches: list[dict] | None = None) -> dict[str, float]:
     standings_by_team = {row["team"]: row for row in standings}
+    stage_by_team = active_stage_by_team(matches or [])
     weights = {}
     for team in teams:
         row = standings_by_team.get(team["name"], {})
         seed_rank = DEFAULT_SEED_RANKS.get(team["name"], 48)
         survival = survival_probability(row)
+        stage = stage_by_team.get(team["name"])
+        if stage:
+            survival = 1.0
         seed_strength = max(1, 55 - seed_rank) / 55
+        stage_boost = 1 + STAGE_PROGRESS.get(stage or "group_stage", 0) * 0.18
         performance = (
             1
             + int(row.get("points", 0)) * 0.32
             + int(row.get("gd", 0)) * 0.12
             + int(row.get("gf", 0)) * 0.05
         )
-        weights[team["name"]] = max(0.05, seed_strength * survival * max(0.2, performance))
+        weights[team["name"]] = max(0.05, seed_strength * survival * stage_boost * max(0.2, performance))
     return weights
+
+
+def teams_in_knockout(matches: list[dict]) -> set[str]:
+    names = set()
+    for match in matches:
+        if match.get("stage") not in KNOCKOUT_STAGES:
+            continue
+        for side in ("home_team", "away_team"):
+            name = match.get(side)
+            if is_real_team_name(name):
+                names.add(name)
+    return names
+
+
+def active_stage_by_team(matches: list[dict]) -> dict[str, str]:
+    stages: dict[str, str] = {}
+    for match in matches:
+        stage = match.get("stage")
+        if stage not in KNOCKOUT_STAGES:
+            continue
+        for side in ("home_team", "away_team"):
+            name = match.get(side)
+            if not is_real_team_name(name):
+                continue
+            current = stages.get(name)
+            if current is None or STAGE_PROGRESS.get(stage, 0) > STAGE_PROGRESS.get(current, 0):
+                stages[name] = stage
+    return stages
+
+
+def is_real_team_name(name: str | None) -> bool:
+    if not name:
+        return False
+    return " team " not in name.lower()
 
 
 def chronological_matches(matches: list[dict]) -> list[dict]:
@@ -481,6 +550,8 @@ def knockout_draw(matches: list[dict]) -> list[dict]:
                             "needs_result": needs_result(match),
                             "home_flag": flag_for(match.get("home_team")),
                             "away_flag": flag_for(match.get("away_team")),
+                            "home_probability": match_probability(match, "home"),
+                            "away_probability": match_probability(match, "away"),
                         }
                         for match in stage_matches
                     ],
@@ -493,13 +564,39 @@ def stage_label(stage: str) -> str:
     return stage.replace("_", " ").title()
 
 
+def match_probability(match: dict, side: str) -> float:
+    stored = match.get(f"{side}_probability")
+    other_side = "away" if side == "home" else "home"
+    other_stored = match.get(f"{other_side}_probability")
+    if stored is not None and other_stored is not None and (stored, other_stored) != (0.5, 0.5):
+        return float(stored)
+
+    home = match.get("home_team")
+    away = match.get("away_team")
+    if match.get("stage") not in KNOCKOUT_STAGES or not is_real_team_name(home) or not is_real_team_name(away):
+        return float(stored if stored is not None else 0.5)
+
+    home_weight = team_strength(home)
+    away_weight = team_strength(away)
+    total = home_weight + away_weight
+    if not total:
+        return 0.5
+    home_probability = max(0.08, min(0.92, home_weight / total))
+    return round(home_probability if side == "home" else 1 - home_probability, 4)
+
+
+def team_strength(team_name: str) -> float:
+    seed_rank = DEFAULT_SEED_RANKS.get(team_name, 48)
+    return max(1, 55 - seed_rank)
+
+
 def dashboard_payload(state: dict) -> dict:
     standings = group_standings(state["matches"], state["teams"])
-    teams = enrich_teams(state["teams"], state["settings"], standings)
+    teams = enrich_teams(state["teams"], state["settings"], standings, state["matches"])
     team_flags = {team["name"]: team["flag"] for team in teams}
     return {
         "settings": state["settings"],
-        "players": player_summaries(state["teams"], state["settings"], standings),
+        "players": player_summaries(state["teams"], state["settings"], standings, state["matches"]),
         "teams": teams,
         "matches": [
             {
@@ -508,6 +605,8 @@ def dashboard_payload(state: dict) -> dict:
                 "needs_result": needs_result(match),
                 "home_flag": flag_for(match.get("home_team")),
                 "away_flag": flag_for(match.get("away_team")),
+                "home_probability": match_probability(match, "home"),
+                "away_probability": match_probability(match, "away"),
             }
             for match in chronological_matches(state["matches"])
         ],

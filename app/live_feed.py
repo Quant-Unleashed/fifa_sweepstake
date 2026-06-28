@@ -49,6 +49,12 @@ async def lazy_sync(state: dict, force: bool = False) -> dict:
         return cache
 
     if provider != "football-data" or not api_key:
+        if provider == "manual" and cache.get("message"):
+            cache["provider"] = provider
+            cache["last_sync"] = cache.get("last_sync") or now_iso()
+            save_cache(cache)
+            state["cache"] = cache
+            return cache
         cache = {
             "provider": provider,
             "last_sync": now_iso(),

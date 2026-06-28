@@ -3,6 +3,7 @@ from app.calculations import (
     enrich_teams,
     generate_match_alert,
     group_standings,
+    match_probability,
     payout_for_team,
     player_summaries,
     title_probabilities,
@@ -41,6 +42,7 @@ def test_rank_performance_title_probability_still_sums_to_one():
     probabilities = title_probabilities(teams)
     assert round(sum(probabilities.values()), 6) == 1
     assert probabilities["Argentina"] > probabilities["Curacao"]
+    assert probabilities["Curacao"] == 0
 
 
 def test_manual_probability_uses_remaining_pool_for_unset_teams():
@@ -116,6 +118,35 @@ def test_dashboard_payload_adds_bst_schedule_standings_and_draw():
     assert payload["matches"] == sorted(payload["matches"], key=lambda item: (item["date"], item["id"]))
     assert len(payload["standings"]) == 48
     assert payload["knockout_draw"][0]["stage"] == "round_of_32"
+    assert payload["players"][0]["active_count"] < payload["players"][0]["team_count"]
+
+
+def test_round_of_32_draw_uses_real_teams_and_seed_probabilities():
+    payload = dashboard_payload(
+        {
+            "teams": initial_teams(),
+            "matches": initial_matches(),
+            "settings": SETTINGS,
+            "cache": initial_cache(),
+            "alerts": [],
+        }
+    )
+    first_match = payload["knockout_draw"][0]["matches"][0]
+    assert first_match["home_team"] == "South Africa"
+    assert first_match["away_team"] == "Canada"
+    assert first_match["display_date"] == "28 Jun 2026, 20:00 BST"
+    assert first_match["away_probability"] > first_match["home_probability"]
+
+
+def test_match_probability_preserves_explicit_provider_probability():
+    match = {
+        "stage": "round_of_32",
+        "home_team": "South Africa",
+        "away_team": "Canada",
+        "home_probability": 0.7,
+        "away_probability": 0.3,
+    }
+    assert match_probability(match, "home") == 0.7
 
 
 def test_dashboard_payload_formats_full_utc_kickoff_in_bst():

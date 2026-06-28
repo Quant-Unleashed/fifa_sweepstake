@@ -49,10 +49,10 @@
     "owner": "Aman",
     "group": "A",
     "group_position": 4,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "mexico",
@@ -71,10 +71,10 @@
     "owner": "Aman",
     "group": "G",
     "group_position": 4,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "portugal",
@@ -93,10 +93,10 @@
     "owner": "Aman",
     "group": "H",
     "group_position": 3,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "south-africa",
@@ -126,10 +126,10 @@
     "owner": "Aman",
     "group": "D",
     "group_position": 4,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "austria",
@@ -236,10 +236,10 @@
     "owner": "Antonie",
     "group": "B",
     "group_position": 3,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "senegal",
@@ -258,10 +258,10 @@
     "owner": "Antonie",
     "group": "F",
     "group_position": 4,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "belgium",
@@ -335,10 +335,10 @@
     "owner": "Chris",
     "group": "C",
     "group_position": 3,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "norway",
@@ -357,10 +357,10 @@
     "owner": "Chris",
     "group": "L",
     "group_position": 4,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "switzerland",
@@ -379,10 +379,10 @@
     "owner": "Chris",
     "group": "H",
     "group_position": 4,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "uzbekistan",
@@ -390,10 +390,10 @@
     "owner": "Chris",
     "group": "K",
     "group_position": 3,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "cote-divoire",
@@ -423,10 +423,10 @@
     "owner": "Neesha",
     "group": "E",
     "group_position": 2,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "egypt",
@@ -445,10 +445,10 @@
     "owner": "Neesha",
     "group": "G",
     "group_position": 3,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "iraq",
@@ -456,10 +456,10 @@
     "owner": "Neesha",
     "group": "I",
     "group_position": 3,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "jordan",
@@ -467,10 +467,10 @@
     "owner": "Neesha",
     "group": "J",
     "group_position": 4,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "netherlands",
@@ -489,10 +489,10 @@
     "owner": "Neesha",
     "group": "C",
     "group_position": 4,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "south-korea",
@@ -500,10 +500,10 @@
     "owner": "Neesha",
     "group": "A",
     "group_position": 3,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "group_stage",
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated before the Round of 32."
   },
   {
     "id": "spain",
