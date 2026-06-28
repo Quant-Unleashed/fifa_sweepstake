@@ -274,7 +274,7 @@ def player_summaries(
 
 
 def generate_match_alert(match: dict, teams: list[dict], settings: dict) -> dict | None:
-    if match.get("status") != "finished":
+    if not match_finished(match):
         return None
     team_by_name = {team["name"]: team for team in teams}
     names = [match.get("home_team"), match.get("away_team")]
@@ -344,7 +344,7 @@ def group_standings(matches: list[dict], teams: list[dict]) -> list[dict]:
         for team in teams
     }
     for match in matches:
-        if match.get("stage") != "group_stage" or match.get("status") != "finished":
+        if match.get("stage") != "group_stage" or not match_finished(match):
             continue
         home = match.get("home_team")
         away = match.get("away_team")
@@ -523,7 +523,7 @@ def format_bst(value: str | None) -> str:
 
 
 def needs_result(match: dict) -> bool:
-    if match.get("status") in {"finished", "live"}:
+    if match_finished(match) or match.get("status") == "live":
         return False
     if match.get("home_score") is not None and match.get("away_score") is not None:
         return False
@@ -531,6 +531,18 @@ def needs_result(match: dict) -> bool:
     if parsed.tzinfo is None:
         parsed = parsed.replace(tzinfo=timezone.utc)
     return parsed < datetime.now(timezone.utc)
+
+
+def match_finished(match: dict) -> bool:
+    if match.get("status") == "finished":
+        return True
+    return match.get("home_score") is not None and match.get("away_score") is not None
+
+
+def display_status(match: dict) -> str:
+    if match_finished(match):
+        return "finished"
+    return match.get("status") or "scheduled"
 
 
 def knockout_draw(matches: list[dict]) -> list[dict]:
@@ -547,6 +559,7 @@ def knockout_draw(matches: list[dict]) -> list[dict]:
                         {
                             **match,
                             "display_date": format_bst(match.get("date")),
+                            "status": display_status(match),
                             "needs_result": needs_result(match),
                             "home_flag": flag_for(match.get("home_team")),
                             "away_flag": flag_for(match.get("away_team")),
@@ -602,6 +615,7 @@ def dashboard_payload(state: dict) -> dict:
             {
                 **match,
                 "display_date": format_bst(match.get("date")),
+                "status": display_status(match),
                 "needs_result": needs_result(match),
                 "home_flag": flag_for(match.get("home_team")),
                 "away_flag": flag_for(match.get("away_team")),
