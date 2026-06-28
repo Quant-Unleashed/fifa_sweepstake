@@ -116,7 +116,8 @@ section {
 
 .summary-bar,
 .player-grid,
-.two-column {
+.two-column,
+.match-spotlight {
   display: grid;
   gap: 14px;
 }
@@ -126,6 +127,7 @@ section {
 }
 
 .metric,
+.match-panel,
 .player-card,
 .rules,
 .admin-login,
@@ -143,6 +145,76 @@ section {
 
 .metric {
   padding: 16px;
+}
+
+.match-spotlight {
+  grid-template-columns: 1fr 1.25fr 1.25fr;
+}
+
+.match-panel {
+  padding: 14px;
+  min-width: 0;
+}
+
+.match-panel h2 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.match-panel-list {
+  display: grid;
+  gap: 8px;
+}
+
+.mini-match {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfa;
+  padding: 9px 10px;
+}
+
+.mini-match.is-live {
+  border-color: #f0c45d;
+  background: #fff8e5;
+}
+
+.mini-match span {
+  display: block;
+  color: var(--gold);
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.mini-match strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.92rem;
+  line-height: 1.25;
+}
+
+.mini-match small {
+  color: var(--muted);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.mini-match em {
+  color: var(--blue);
+  font-style: normal;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.empty-state {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 700;
 }
 
 .metric strong {
@@ -520,6 +592,7 @@ textarea {
   .summary-bar,
   .player-grid,
   .two-column,
+  .match-spotlight,
   .standings-grid,
   .admin-list.compact {
     grid-template-columns: 1fr;

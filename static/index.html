@@ -20,6 +20,8 @@
 
       <section class="model-strip" id="modelStrip"></section>
 
+      <section class="match-spotlight" id="matchSpotlight"></section>
+
       <section>
         <div class="section-heading">
           <h2>Players</h2>
@@ -48,14 +50,14 @@
       <section>
         <div class="section-heading">
           <h2>Tournament view</h2>
-          <p>Group standings first, then the knockout path as the draw fills in.</p>
+          <p>Knockout path first, with group tables kept available for context.</p>
         </div>
         <div class="tabs" role="tablist" aria-label="Tournament views">
-          <button class="tab-button active" type="button" data-tab="standings">Table standings</button>
-          <button class="tab-button" type="button" data-tab="draw">Knockout draw</button>
+          <button class="tab-button active" type="button" data-tab="draw">Knockout draw</button>
+          <button class="tab-button" type="button" data-tab="standings">Table standings</button>
         </div>
-        <div id="standingsPanel" class="tab-panel"></div>
-        <div id="drawPanel" class="tab-panel hidden"></div>
+        <div id="drawPanel" class="tab-panel"></div>
+        <div id="standingsPanel" class="tab-panel hidden"></div>
       </section>
 
       <section>
@@ -116,6 +118,6 @@
       </section>
     </main>
 
-    <script src="/static/app.js"></script>
+    <script src="/static/app.js?v=round32-rail"></script>
   </body>
 </html>

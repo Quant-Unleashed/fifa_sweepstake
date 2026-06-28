@@ -102,6 +102,22 @@ def test_group_standings_include_points_goal_difference_and_position():
     assert south_africa["lost"] == 1
 
 
+def test_group_standings_count_scores_even_when_status_not_finished():
+    teams = initial_teams()
+    matches = initial_matches()
+    match = next(item for item in matches if item["home_team"] == "Mexico" and item["away_team"] == "South Africa")
+    match["status"] = "scheduled"
+    match["home_score"] = 1
+    match["away_score"] = 1
+    standings = group_standings(matches, teams)
+    mexico = next(row for row in standings if row["team"] == "Mexico")
+    south_africa = next(row for row in standings if row["team"] == "South Africa")
+    assert mexico["played"] == 1
+    assert mexico["points"] == 1
+    assert south_africa["played"] == 1
+    assert south_africa["points"] == 1
+
+
 def test_dashboard_payload_adds_bst_schedule_standings_and_draw():
     payload = dashboard_payload(
         {

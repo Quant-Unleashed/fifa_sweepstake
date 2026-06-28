@@ -20,6 +20,7 @@ async function loadDashboard() {
 function renderAll() {
   renderSummary();
   renderModelStrip();
+  renderMatchSpotlight();
   renderPlayers();
   renderRules();
   renderAlerts();
@@ -27,6 +28,55 @@ function renderAll() {
   renderKnockoutDraw();
   renderMatches();
   renderTeams();
+}
+
+function renderMatchSpotlight() {
+  const liveMatches = dashboard.matches
+    .filter((match) => match.status === "live" || isCurrentWindow(match))
+    .sort((a, b) => matchTime(a) - matchTime(b));
+  const lastMatches = dashboard.matches
+    .filter((match) => isFinished(match))
+    .sort((a, b) => matchTime(b) - matchTime(a))
+    .slice(0, 3);
+  const upcomingMatches = dashboard.matches
+    .filter((match) => !isFinished(match) && match.status !== "live" && !isCurrentWindow(match))
+    .sort((a, b) => matchTime(a) - matchTime(b))
+    .filter((match) => matchTime(match) >= Date.now())
+    .slice(0, 3);
+  const fallbackUpcoming = dashboard.matches
+    .filter((match) => !isFinished(match) && match.status !== "live" && !isCurrentWindow(match))
+    .sort((a, b) => matchTime(a) - matchTime(b))
+    .slice(0, 3);
+  const nextMatches = upcomingMatches.length ? upcomingMatches : fallbackUpcoming;
+
+  document.querySelector("#matchSpotlight").innerHTML = `
+    ${matchPanel("Live score", liveMatches.slice(0, 3), "No live match right now.")}
+    ${matchPanel("Last 3 matches", lastMatches, "No completed scores loaded yet.")}
+    ${matchPanel("Next 3 matches", nextMatches, "No upcoming fixtures loaded.")}
+  `;
+}
+
+function matchPanel(title, matches, emptyText) {
+  return `
+    <article class="match-panel">
+      <h2>${title}</h2>
+      <div class="match-panel-list">
+        ${matches.length ? matches.map(matchCard).join("") : `<p class="empty-state">${emptyText}</p>`}
+      </div>
+    </article>
+  `;
+}
+
+function matchCard(match) {
+  return `
+    <div class="mini-match ${match.status === "live" ? "is-live" : ""}">
+      <div>
+        <span>${match.display_date || match.date || ""}</span>
+        <strong>${teamLabel(match.home_team)} <small>vs</small> ${teamLabel(match.away_team)}</strong>
+      </div>
+      <em>${score(match)}</em>
+    </div>
+  `;
 }
 
 function renderSummary() {
@@ -268,7 +318,7 @@ function teamByName(name) {
 }
 
 function score(match) {
-  if (match.home_score === null || match.away_score === null) return "-";
+  if (match.home_score === null || match.home_score === undefined || match.away_score === null || match.away_score === undefined) return "-";
   return `${match.home_score} - ${match.away_score}`;
 }
 
@@ -277,6 +327,24 @@ function statusBadge(match) {
     return `<span class="status needs-result">Needs result</span>`;
   }
   return `<span class="status ${match.status}">${match.status}</span>`;
+}
+
+function isFinished(match) {
+  return match.status === "finished" || (match.home_score !== null && match.home_score !== undefined && match.away_score !== null && match.away_score !== undefined);
+}
+
+function isCurrentWindow(match) {
+  if (isFinished(match)) return false;
+  const start = matchTime(match);
+  if (start === Number.MAX_SAFE_INTEGER) return false;
+  const now = Date.now();
+  const fourHours = 4 * 60 * 60 * 1000;
+  return start <= now && now - start <= fourHours;
+}
+
+function matchTime(match) {
+  const value = Date.parse(match.date || "");
+  return Number.isNaN(value) ? Number.MAX_SAFE_INTEGER : value;
 }
 
 function stageLabel(stage) {
