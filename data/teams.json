@@ -104,8 +104,8 @@
     "owner": "Aman",
     "group": "A",
     "group_position": 2,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -181,8 +181,8 @@
     "owner": "Antonie",
     "group": "E",
     "group_position": 1,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -203,8 +203,8 @@
     "owner": "Antonie",
     "group": "F",
     "group_position": 2,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -478,8 +478,8 @@
     "owner": "Neesha",
     "group": "F",
     "group_position": 1,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
     "manual_title_probability": null,
     "notes": ""
   },

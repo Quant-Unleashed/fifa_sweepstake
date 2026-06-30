@@ -428,8 +428,39 @@ td .muted {
   padding: 12px;
 }
 
+.draw-match.finished {
+  background: #fbfcfa;
+}
+
 .draw-match:last-child {
   border-bottom: 0;
+}
+
+.draw-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.draw-meta .status {
+  padding: 2px 7px;
+  font-size: 0.7rem;
+}
+
+.draw-team {
+  border-radius: 6px;
+  padding: 3px 5px;
+}
+
+.draw-team.winner {
+  background: #dff2e8;
+  color: var(--green);
+}
+
+.draw-team.eliminated {
+  color: var(--red);
+  text-decoration: line-through;
 }
 
 .draw-match small {

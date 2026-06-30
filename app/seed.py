@@ -134,6 +134,13 @@ ROUND_OF_32_FIXTURES = [
     ("2026-07-04T01:30:00Z", "Colombia", "Ghana", "Kansas City Stadium"),
 ]
 
+ROUND_OF_32_RESULTS = {
+    1: {"home_score": 0, "away_score": 1, "winner": "Canada"},
+    2: {"home_score": 2, "away_score": 1, "winner": "Brazil"},
+    3: {"home_score": 1, "away_score": 1, "winner": "Paraguay", "notes": "Paraguay advanced on penalties."},
+    4: {"home_score": 1, "away_score": 1, "winner": "Morocco", "notes": "Morocco advanced on penalties."},
+}
+
 
 def slugify(value: str) -> str:
     return (
@@ -153,10 +160,16 @@ def owner_for(team_name: str) -> str:
 
 def initial_teams() -> list[dict]:
     active_teams = {team for fixture in ROUND_OF_32_FIXTURES for team in fixture[1:3]}
+    result_eliminated = set()
+    for index, result in ROUND_OF_32_RESULTS.items():
+        home_team = ROUND_OF_32_FIXTURES[index - 1][1]
+        away_team = ROUND_OF_32_FIXTURES[index - 1][2]
+        result_eliminated.add(away_team if result["winner"] == home_team else home_team)
     teams = []
     for group, names in GROUPS.items():
         for position, name in enumerate(names, start=1):
-            is_active = name in active_teams
+            is_active = name in active_teams and name not in result_eliminated
+            exit_stage = None if is_active else "round_of_32" if name in result_eliminated else "group_stage"
             teams.append(
                 {
                     "id": slugify(name),
@@ -165,9 +178,9 @@ def initial_teams() -> list[dict]:
                     "group": group,
                     "group_position": position,
                     "status": "active" if is_active else "eliminated",
-                    "exit_stage": None if is_active else "group_stage",
+                    "exit_stage": exit_stage,
                     "manual_title_probability": None,
-                    "notes": "" if is_active else "Eliminated before the Round of 32.",
+                    "notes": "" if is_active else "Eliminated in the Round of 32." if name in result_eliminated else "Eliminated before the Round of 32.",
                 }
             )
     return sorted(teams, key=lambda team: (team["owner"], team["name"]))
@@ -201,6 +214,7 @@ def initial_matches() -> list[dict]:
             match_number += 1
 
     for index, (date, home_team, away_team, location) in enumerate(ROUND_OF_32_FIXTURES, start=1):
+        result = ROUND_OF_32_RESULTS.get(index, {})
         matches.append(
             {
                 "id": f"m{match_number:03d}",
@@ -209,14 +223,15 @@ def initial_matches() -> list[dict]:
                 "date": date,
                 "home_team": home_team,
                 "away_team": away_team,
-                "home_score": None,
-                "away_score": None,
-                "status": "scheduled",
-                "winner": None,
+                "home_score": result.get("home_score"),
+                "away_score": result.get("away_score"),
+                "status": "finished" if result else "scheduled",
+                "winner": result.get("winner"),
                 "home_probability": 0.5,
                 "away_probability": 0.5,
                 "location": location,
-                "source": "confirmed-bracket",
+                "source": "manual-result" if result else "confirmed-bracket",
+                "notes": result.get("notes", ""),
             }
         )
         match_number += 1
@@ -241,6 +256,13 @@ def initial_matches() -> list[dict]:
                 }
             )
             match_number += 1
+    round_of_16_advancements = {
+        "m089": {"home_team": "Canada", "away_team": "Brazil"},
+        "m090": {"home_team": "Paraguay", "away_team": "Morocco"},
+    }
+    for match in matches:
+        if match["id"] in round_of_16_advancements:
+            match.update(round_of_16_advancements[match["id"]])
     return matches
 
 
@@ -248,7 +270,7 @@ def initial_cache() -> dict:
     return {
         "provider": "manual",
         "last_sync": "2026-06-28T21:35:00+01:00",
-        "message": "Manual Round of 32 bracket loaded. Missing most group-stage scorelines and live results unless FOOTBALL_PROVIDER=football-data is configured.",
+        "message": "Manual Round of 32 results loaded through Netherlands vs Morocco. Missing live results after that unless FOOTBALL_PROVIDER=football-data is configured.",
         "raw_count": len(ROUND_OF_32_FIXTURES),
     }
 

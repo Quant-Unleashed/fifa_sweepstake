@@ -17,6 +17,13 @@ TERMINAL_STAGES = {
 ACTIVE_STATUS = "active"
 LONDON_TZ = ZoneInfo("Europe/London")
 KNOCKOUT_STAGES = ["round_of_32", "round_of_16", "quarterfinal", "semifinal", "third_place", "final"]
+ADVANCEMENT_STAGES = ["round_of_32", "round_of_16", "quarterfinal", "semifinal", "final"]
+NEXT_STAGE = {
+    "round_of_32": "round_of_16",
+    "round_of_16": "quarterfinal",
+    "quarterfinal": "semifinal",
+    "semifinal": "final",
+}
 STAGE_PROGRESS = {
     "group_stage": 0,
     "round_of_32": 1,
@@ -162,6 +169,97 @@ def flag_for(team_name: str | None) -> str:
     if not team_name:
         return ""
     return TEAM_FLAGS.get(team_name, "")
+
+
+def apply_tournament_results(matches: list[dict], teams: list[dict]) -> bool:
+    changed = False
+    team_by_name = {team["name"]: team for team in teams}
+    knockout_team_names = teams_in_knockout(matches)
+
+    for team in teams:
+        if team["name"] not in knockout_team_names:
+            continue
+        if team.get("exit_stage") in {None, "group_stage"} or team.get("status") == "eliminated":
+            changed |= set_if_changed(team, "status", ACTIVE_STATUS)
+            changed |= set_if_changed(team, "exit_stage", None)
+
+    for match in chronological_matches(matches):
+        if match.get("stage") not in ADVANCEMENT_STAGES or not match_finished(match):
+            continue
+
+        winner = match.get("winner") or infer_winner(match)
+        if not winner:
+            continue
+        changed |= set_if_changed(match, "winner", winner)
+        changed |= set_if_changed(match, "status", "finished")
+
+        loser = losing_team(match, winner)
+        stage = match.get("stage")
+        if loser in team_by_name:
+            loser_stage = "runner_up" if stage == "final" else stage
+            changed |= set_if_changed(team_by_name[loser], "status", "eliminated")
+            changed |= set_if_changed(team_by_name[loser], "exit_stage", loser_stage)
+        if winner in team_by_name:
+            changed |= set_if_changed(team_by_name[winner], "status", ACTIVE_STATUS)
+            changed |= set_if_changed(team_by_name[winner], "exit_stage", "winner" if stage == "final" else None)
+
+        changed |= advance_winner(matches, match, winner)
+        if stage == "semifinal" and loser:
+            changed |= advance_semifinal_loser(matches, loser)
+
+    return changed
+
+
+def set_if_changed(item: dict, key: str, value: object) -> bool:
+    if item.get(key) == value:
+        return False
+    item[key] = value
+    return True
+
+
+def losing_team(match: dict, winner: str) -> str | None:
+    for side in ("home_team", "away_team"):
+        team = match.get(side)
+        if team and team != winner and is_real_team_name(team):
+            return team
+    return None
+
+
+def infer_winner(match: dict) -> str | None:
+    home_score = match.get("home_score")
+    away_score = match.get("away_score")
+    if home_score is None or away_score is None or home_score == away_score:
+        return match.get("winner")
+    return match["home_team"] if int(home_score) > int(away_score) else match["away_team"]
+
+
+def advance_winner(matches: list[dict], match: dict, winner: str) -> bool:
+    next_stage = NEXT_STAGE.get(match.get("stage"))
+    if not next_stage:
+        return False
+    current_round = [item for item in chronological_matches(matches) if item.get("stage") == match.get("stage")]
+    next_round = [item for item in chronological_matches(matches) if item.get("stage") == next_stage]
+    try:
+        current_index = current_round.index(match)
+    except ValueError:
+        return False
+    target = next_round[current_index // 2] if current_index // 2 < len(next_round) else None
+    if not target:
+        return False
+    side = "home_team" if current_index % 2 == 0 else "away_team"
+    return set_if_changed(target, side, winner)
+
+
+def advance_semifinal_loser(matches: list[dict], loser: str) -> bool:
+    semifinals = [item for item in chronological_matches(matches) if item.get("stage") == "semifinal"]
+    third_place = next((item for item in chronological_matches(matches) if item.get("stage") == "third_place"), None)
+    if not third_place:
+        return False
+    source = next((item for item in semifinals if loser in {item.get("home_team"), item.get("away_team")}), None)
+    if not source:
+        return False
+    side = "home_team" if semifinals.index(source) == 0 else "away_team"
+    return set_if_changed(third_place, side, loser)
 
 
 def title_probabilities(

@@ -6,8 +6,8 @@ from datetime import datetime, timedelta, timezone
 import httpx
 
 from app.seed import now_iso
-from app.storage import save_alerts, save_cache, save_matches
-from app.calculations import rebuild_alerts
+from app.storage import save_alerts, save_cache, save_matches, save_teams
+from app.calculations import apply_tournament_results, rebuild_alerts
 
 NAME_ALIASES = {
     "bosnia herzegovina": "bosnia and herzegovina",
@@ -116,7 +116,9 @@ def merge_football_data_matches(state: dict, api_matches: list[dict], persist: b
         updated += 1
 
     if updated and persist:
+        apply_tournament_results(local_matches, state["teams"])
         save_matches(local_matches)
+        save_teams(state["teams"])
         alerts = rebuild_alerts(local_matches, state["teams"], state["settings"])
         save_alerts(alerts)
     return updated
