@@ -141,6 +141,11 @@ ROUND_OF_32_RESULTS = {
     4: {"home_score": 1, "away_score": 1, "winner": "Morocco", "notes": "Morocco advanced on penalties."},
 }
 
+ADVANCED_BEST_STAGES = {
+    result["winner"]: "round_of_16"
+    for result in ROUND_OF_32_RESULTS.values()
+}
+
 
 def slugify(value: str) -> str:
     return (
@@ -179,6 +184,7 @@ def initial_teams() -> list[dict]:
                     "group_position": position,
                     "status": "active" if is_active else "eliminated",
                     "exit_stage": exit_stage,
+                    "best_stage": ADVANCED_BEST_STAGES.get(name),
                     "manual_title_probability": None,
                     "notes": "" if is_active else "Eliminated in the Round of 32." if name in result_eliminated else "Eliminated before the Round of 32.",
                 }
