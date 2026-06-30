@@ -26,6 +26,10 @@ def test_player_totals_are_12_teams_each():
 
 
 def test_payout_ladder_for_terminal_stages():
+    active_team = {"status": "active", "best_stage": "round_of_16", "exit_stage": None}
+    assert payout_for_team(active_team, SETTINGS) == 1
+    active_team["best_stage"] = "quarterfinal"
+    assert payout_for_team(active_team, SETTINGS) == 2
     team = {"status": "eliminated", "exit_stage": "round_of_16"}
     assert payout_for_team(team, SETTINGS) == 1
     team["exit_stage"] = "quarterfinal"
@@ -184,7 +188,21 @@ def test_knockout_result_eliminates_loser_and_advances_winner():
     assert south_africa["exit_stage"] == "round_of_32"
     assert canada["status"] == "active"
     assert canada["exit_stage"] is None
+    assert canada["best_stage"] == "round_of_16"
     assert next_match["home_team"] == "Canada"
+
+
+def test_round_of_16_teams_are_guaranteed_paid_stage_money():
+    teams = initial_teams()
+    matches = initial_matches()
+    apply_tournament_results(matches, teams)
+    summaries = player_summaries(teams, SETTINGS, matches=matches)
+    antonie = next(summary for summary in summaries if summary["name"] == "Antonie")
+    assert antonie["confirmed_winnings"] == 3
+    assert antonie["actual_profit"] == -9
+    assert payout_for_team(next(team for team in teams if team["name"] == "Canada"), SETTINGS) == 1
+    assert payout_for_team(next(team for team in teams if team["name"] == "Paraguay"), SETTINGS) == 1
+    assert payout_for_team(next(team for team in teams if team["name"] == "Morocco"), SETTINGS) == 1
 
 
 def test_final_result_confirms_runner_up_and_winner_payouts():

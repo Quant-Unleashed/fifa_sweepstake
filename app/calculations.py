@@ -153,9 +153,7 @@ def money(value: float) -> float:
 
 
 def payout_for_team(team: dict, settings: dict) -> float:
-    if team.get("status") != "eliminated" and team.get("exit_stage") != "winner":
-        return 0.0
-    stage = team.get("exit_stage")
+    stage = team.get("best_stage") or team.get("exit_stage")
     return money(settings["payouts"].get(stage, 0))
 
 
@@ -202,6 +200,7 @@ def apply_tournament_results(matches: list[dict], teams: list[dict]) -> bool:
         if winner in team_by_name:
             changed |= set_if_changed(team_by_name[winner], "status", ACTIVE_STATUS)
             changed |= set_if_changed(team_by_name[winner], "exit_stage", "winner" if stage == "final" else None)
+            changed |= set_if_changed(team_by_name[winner], "best_stage", "winner" if stage == "final" else NEXT_STAGE.get(stage))
 
         changed |= advance_winner(matches, match, winner)
         if stage == "semifinal" and loser:
@@ -312,7 +311,7 @@ def expected_value_for_team(
     confirmed = payout_for_team(team, settings)
     if team.get("status") != ACTIVE_STATUS:
         return confirmed
-    return money(probabilities.get(team["name"], 0.0) * remaining_pool)
+    return money(confirmed + probabilities.get(team["name"], 0.0) * remaining_pool)
 
 
 def enrich_teams(
@@ -368,6 +367,11 @@ def player_summaries(
                 "teams": owned,
             }
         )
+    ev_residual = money(payout_pool(settings) - sum(summary["expected_value"] for summary in summaries))
+    if summaries and ev_residual:
+        target = max(summaries, key=lambda summary: summary["expected_value"])
+        target["expected_value"] = money(target["expected_value"] + ev_residual)
+        target["ev_profit"] = money(target["expected_value"] - target["invested"])
     return summaries
 
 

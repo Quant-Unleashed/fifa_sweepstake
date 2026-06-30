@@ -162,7 +162,8 @@
     "status": "active",
     "exit_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "",
+    "best_stage": "round_of_16"
   },
   {
     "id": "france",
@@ -217,7 +218,8 @@
     "status": "active",
     "exit_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "",
+    "best_stage": "round_of_16"
   },
   {
     "id": "paraguay",
@@ -228,7 +230,8 @@
     "status": "active",
     "exit_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "",
+    "best_stage": "round_of_16"
   },
   {
     "id": "qatar",
@@ -283,7 +286,8 @@
     "status": "active",
     "exit_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "",
+    "best_stage": "round_of_16"
   },
   {
     "id": "cape-verde",
