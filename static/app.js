@@ -86,7 +86,7 @@ function renderSummary() {
   const activeTeams = dashboard.teams.filter((team) => team.status === "active").length;
   const items = [
     ["Pot", currency.format(totalInvested)],
-    ["Actual won", currency.format(totalConfirmed)],
+    ["Guaranteed", currency.format(totalConfirmed)],
     ["Combined EV", currency.format(totalEv)],
     ["Teams alive", `${activeTeams}/48`],
   ];
@@ -109,7 +109,7 @@ function renderPlayers() {
           </div>
           <div class="money-line">
             ${miniStat("Invested", currency.format(player.invested))}
-            ${miniStat("Actual won", currency.format(player.confirmed_winnings))}
+            ${miniStat("Guaranteed", currency.format(player.confirmed_winnings))}
             ${miniStat("EV", currency.format(player.expected_value))}
           </div>
           <div class="money-line two">
@@ -272,16 +272,32 @@ function drawRound(round) {
     <article class="draw-round">
       <h3>${round.label}</h3>
       ${round.matches.map((match) => `
-        <div class="draw-match">
-          <span>${match.display_date || ""}</span>
-          <strong>${teamLabel(match.home_team)}</strong>
+        <div class="draw-match ${match.status}">
+          <div class="draw-meta">
+            <span>${match.display_date || ""}</span>
+            ${statusBadge(match)}
+          </div>
+          ${drawTeam(match, "home")}
           <small>vs</small>
-          <strong>${teamLabel(match.away_team)}</strong>
+          ${drawTeam(match, "away")}
           <em>${score(match)}</em>
         </div>
       `).join("")}
     </article>
   `;
+}
+
+function drawTeam(match, side) {
+  const name = match[`${side}_team`];
+  const isWinner = match.winner && match.winner === name;
+  const isEliminated = isFinished(match) && match.winner && match.winner !== name;
+  const status = teamByName(name)?.status;
+  const classes = [
+    "draw-team",
+    isWinner ? "winner" : "",
+    isEliminated || status === "eliminated" ? "eliminated" : "",
+  ].filter(Boolean).join(" ");
+  return `<strong class="${classes}">${teamLabel(name)}</strong>`;
 }
 
 function populateFilters() {

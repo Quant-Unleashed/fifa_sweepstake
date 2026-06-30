@@ -1,6 +1,6 @@
 {
   "provider": "manual",
   "last_sync": "2026-06-28T21:35:00+01:00",
-  "message": "Manual Round of 32 bracket loaded. Missing most group-stage scorelines and live results unless FOOTBALL_PROVIDER=football-data is configured.",
+  "message": "Manual Round of 32 results loaded through Netherlands vs Morocco. Missing live results after that unless FOOTBALL_PROVIDER=football-data is configured.",
   "raw_count": 16
 }

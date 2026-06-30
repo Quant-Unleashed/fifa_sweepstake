@@ -9,7 +9,7 @@ from fastapi import FastAPI, Header, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.calculations import dashboard_payload, rebuild_alerts
+from app.calculations import apply_tournament_results, dashboard_payload, rebuild_alerts
 from app.live_feed import lazy_sync
 from app.storage import (
     MATCHES_FILE,
@@ -49,6 +49,8 @@ async def admin() -> FileResponse:
 async def dashboard() -> dict:
     state = load_state()
     await lazy_sync(state)
+    state = load_state()
+    reconcile_state(state)
     return dashboard_payload(load_state())
 
 
@@ -91,7 +93,9 @@ async def update_match(
     if match.get("status") == "finished" and not match.get("winner"):
         match["winner"] = infer_winner(match)
 
+    apply_tournament_results(matches, state["teams"])
     save_matches(matches)
+    save_teams(state["teams"])
     refresh_alerts()
     return {"ok": True, "match": match}
 
@@ -133,6 +137,7 @@ async def import_data(
     require_admin(x_admin_password)
     if "teams" not in payload or "matches" not in payload:
         raise HTTPException(status_code=400, detail="Import must include teams and matches.")
+    apply_tournament_results(payload["matches"], payload["teams"])
     save_teams(payload["teams"])
     save_matches(payload["matches"])
     refresh_alerts()
@@ -177,6 +182,14 @@ def refresh_alerts() -> None:
     state = load_state()
     alerts = rebuild_alerts(state["matches"], state["teams"], state["settings"])
     save_alerts(alerts)
+
+
+def reconcile_state(state: dict) -> None:
+    if apply_tournament_results(state["matches"], state["teams"]):
+        save_matches(state["matches"])
+        save_teams(state["teams"])
+        alerts = rebuild_alerts(state["matches"], state["teams"], state["settings"])
+        save_alerts(alerts)
 
 
 if __name__ == "__main__":

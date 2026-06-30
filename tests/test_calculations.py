@@ -1,4 +1,5 @@
 from app.calculations import (
+    apply_tournament_results,
     dashboard_payload,
     enrich_teams,
     generate_match_alert,
@@ -163,6 +164,48 @@ def test_match_probability_preserves_explicit_provider_probability():
         "away_probability": 0.3,
     }
     assert match_probability(match, "home") == 0.7
+
+
+def test_knockout_result_eliminates_loser_and_advances_winner():
+    teams = initial_teams()
+    matches = initial_matches()
+    match = next(item for item in matches if item["id"] == "m073")
+    match["status"] = "finished"
+    match["home_score"] = 1
+    match["away_score"] = 2
+
+    assert apply_tournament_results(matches, teams) is True
+
+    south_africa = next(team for team in teams if team["name"] == "South Africa")
+    canada = next(team for team in teams if team["name"] == "Canada")
+    next_match = next(item for item in matches if item["id"] == "m089")
+    assert match["winner"] == "Canada"
+    assert south_africa["status"] == "eliminated"
+    assert south_africa["exit_stage"] == "round_of_32"
+    assert canada["status"] == "active"
+    assert canada["exit_stage"] is None
+    assert next_match["home_team"] == "Canada"
+
+
+def test_final_result_confirms_runner_up_and_winner_payouts():
+    teams = initial_teams()
+    matches = initial_matches()
+    final = next(item for item in matches if item["stage"] == "final")
+    final["home_team"] = "Argentina"
+    final["away_team"] = "France"
+    final["status"] = "finished"
+    final["home_score"] = 3
+    final["away_score"] = 1
+
+    apply_tournament_results(matches, teams)
+
+    argentina = next(team for team in teams if team["name"] == "Argentina")
+    france = next(team for team in teams if team["name"] == "France")
+    assert argentina["exit_stage"] == "winner"
+    assert france["status"] == "eliminated"
+    assert france["exit_stage"] == "runner_up"
+    assert payout_for_team(argentina, SETTINGS) == 16
+    assert payout_for_team(france, SETTINGS) == 8
 
 
 def test_dashboard_payload_formats_full_utc_kickoff_in_bst():
