@@ -7,7 +7,7 @@ import httpx
 
 from app.seed import now_iso
 from app.storage import save_alerts, save_cache, save_matches, save_teams
-from app.calculations import apply_tournament_results, rebuild_alerts
+from app.calculations import apply_tournament_results, match_sort_key, rebuild_alerts
 
 NAME_ALIASES = {
     "bosnia herzegovina": "bosnia and herzegovina",
@@ -99,7 +99,7 @@ def merge_football_data_matches(state: dict, api_matches: list[dict], persist: b
         away = canonical_name(team_name(api_match, "awayTeam"))
         if not home or not away:
             continue
-        local = find_local_match(local_matches, home, away)
+        local = find_local_match(local_matches, home, away, api_match.get("utcDate"))
         if not local:
             continue
 
@@ -124,13 +124,32 @@ def merge_football_data_matches(state: dict, api_matches: list[dict], persist: b
     return updated
 
 
-def find_local_match(matches: list[dict], home: str, away: str) -> dict | None:
+def find_local_match(matches: list[dict], home: str, away: str, utc_date: str | None = None) -> dict | None:
+    candidates = []
     for match in matches:
         local_home = canonical_name(match.get("home_team", ""))
         local_away = canonical_name(match.get("away_team", ""))
         if {local_home, local_away} == {home, away}:
-            return match
-    return None
+            candidates.append(match)
+    if not candidates:
+        return None
+    if len(candidates) == 1 or not utc_date:
+        return candidates[0]
+
+    api_time = parse_api_datetime(utc_date)
+    if not api_time:
+        return candidates[0]
+    return min(candidates, key=lambda match: abs(match_sort_key(match) - api_time))
+
+
+def parse_api_datetime(value: str) -> datetime | None:
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
 
 
 def team_name(api_match: dict, side: str) -> str | None:
