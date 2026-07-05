@@ -207,6 +207,27 @@ def test_round_of_16_teams_are_guaranteed_paid_stage_money():
     assert payout_for_team(next(team for team in teams if team["name"] == "France"), SETTINGS) == 2
 
 
+def test_stale_quarterfinal_duplicate_is_cleared_when_sources_unfinished():
+    teams = initial_teams()
+    matches = initial_matches()
+    quarterfinal = next(item for item in matches if item["id"] == "m098")
+    quarterfinal["home_team"] = "Morocco"
+    quarterfinal["away_team"] = "France"
+
+    assert apply_tournament_results(matches, teams) is True
+
+    assert quarterfinal["home_team"] == "Quarterfinal team 2A"
+    assert quarterfinal["away_team"] == "Quarterfinal team 2B"
+
+
+def test_current_tournament_reconciliation_is_idempotent():
+    teams = initial_teams()
+    matches = initial_matches()
+
+    assert apply_tournament_results(matches, teams) is True
+    assert apply_tournament_results(matches, teams) is False
+
+
 def test_final_result_confirms_runner_up_and_winner_payouts():
     teams = initial_teams()
     matches = initial_matches()
