@@ -41,6 +41,14 @@ ADVANCEMENT_TARGETS = {
     "m086": ("m095", "away_team"),
     "m085": ("m096", "home_team"),
     "m088": ("m096", "away_team"),
+    "m089": ("m097", "home_team"),
+    "m090": ("m097", "away_team"),
+    "m091": ("m098", "home_team"),
+    "m092": ("m098", "away_team"),
+    "m093": ("m099", "home_team"),
+    "m094": ("m099", "away_team"),
+    "m095": ("m100", "home_team"),
+    "m096": ("m100", "away_team"),
 }
 STAGE_PROGRESS = {
     "group_stage": 0,
@@ -190,14 +198,16 @@ def flag_for(team_name: str | None) -> str:
 def apply_tournament_results(matches: list[dict], teams: list[dict]) -> bool:
     changed = False
     team_by_name = {team["name"]: team for team in teams}
-    knockout_team_names = teams_in_knockout(matches)
+    active_knockout_team_names = teams_in_unfinished_knockout(matches)
 
     for team in teams:
-        if team["name"] not in knockout_team_names:
+        if team["name"] not in active_knockout_team_names:
             continue
         if team.get("exit_stage") in {None, "group_stage"} or team.get("status") == "eliminated":
             changed |= set_if_changed(team, "status", ACTIVE_STATUS)
             changed |= set_if_changed(team, "exit_stage", None)
+
+    changed |= clear_stale_advancement_slots(matches)
 
     for match in chronological_matches(matches):
         if match.get("stage") not in ADVANCEMENT_STAGES or not match_finished(match):
@@ -216,14 +226,28 @@ def apply_tournament_results(matches: list[dict], teams: list[dict]) -> bool:
             changed |= set_if_changed(team_by_name[loser], "status", "eliminated")
             changed |= set_if_changed(team_by_name[loser], "exit_stage", loser_stage)
         if winner in team_by_name:
-            changed |= set_if_changed(team_by_name[winner], "status", ACTIVE_STATUS)
-            changed |= set_if_changed(team_by_name[winner], "exit_stage", "winner" if stage == "final" else None)
-            changed |= set_if_changed(team_by_name[winner], "best_stage", "winner" if stage == "final" else NEXT_STAGE.get(stage))
+            changed |= advance_team_stage(team_by_name[winner], stage)
 
         changed |= advance_winner(matches, match, winner)
         if stage == "semifinal" and loser:
             changed |= advance_semifinal_loser(matches, loser)
 
+    return changed
+
+
+def advance_team_stage(team: dict, stage: str | None) -> bool:
+    next_stage = "winner" if stage == "final" else NEXT_STAGE.get(stage)
+    if not next_stage:
+        return False
+
+    changed = False
+    if team.get("status") == "eliminated" and STAGE_PROGRESS.get(team.get("exit_stage"), 0) >= STAGE_PROGRESS.get(next_stage, 0):
+        return False
+
+    changed |= set_if_changed(team, "status", ACTIVE_STATUS)
+    changed |= set_if_changed(team, "exit_stage", "winner" if stage == "final" else None)
+    if STAGE_PROGRESS.get(next_stage, 0) > STAGE_PROGRESS.get(team.get("best_stage"), 0):
+        changed |= set_if_changed(team, "best_stage", next_stage)
     return changed
 
 
@@ -271,6 +295,31 @@ def advance_winner(matches: list[dict], match: dict, winner: str) -> bool:
         return False
     side = "home_team" if current_index % 2 == 0 else "away_team"
     return set_if_changed(target, side, winner)
+
+
+def clear_stale_advancement_slots(matches: list[dict]) -> bool:
+    changed = False
+    match_by_id = {match.get("id"): match for match in matches}
+    for source_id, (target_id, side) in ADVANCEMENT_TARGETS.items():
+        source = match_by_id.get(source_id)
+        target = match_by_id.get(target_id)
+        if not source or not target or match_finished(source):
+            continue
+        current = target.get(side)
+        if not is_real_team_name(current):
+            continue
+        changed |= set_if_changed(target, side, placeholder_team_name(matches, target, side))
+    return changed
+
+
+def placeholder_team_name(matches: list[dict], match: dict, side: str) -> str:
+    stage_matches = [item for item in chronological_matches(matches) if item.get("stage") == match.get("stage")]
+    try:
+        index = stage_matches.index(match) + 1
+    except ValueError:
+        index = 1
+    suffix = "A" if side == "home_team" else "B"
+    return f"{match.get('label', 'Match')} team {index}{suffix}"
 
 
 def advance_semifinal_loser(matches: list[dict], loser: str) -> bool:
@@ -590,6 +639,18 @@ def teams_in_knockout(matches: list[dict]) -> set[str]:
     names = set()
     for match in matches:
         if match.get("stage") not in KNOCKOUT_STAGES:
+            continue
+        for side in ("home_team", "away_team"):
+            name = match.get(side)
+            if is_real_team_name(name):
+                names.add(name)
+    return names
+
+
+def teams_in_unfinished_knockout(matches: list[dict]) -> set[str]:
+    names = set()
+    for match in matches:
+        if match.get("stage") not in KNOCKOUT_STAGES or match_finished(match):
             continue
         for side in ("home_team", "away_team"):
             name = match.get(side)
