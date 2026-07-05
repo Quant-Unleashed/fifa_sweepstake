@@ -24,6 +24,24 @@ NEXT_STAGE = {
     "quarterfinal": "semifinal",
     "semifinal": "final",
 }
+ADVANCEMENT_TARGETS = {
+    "m073": ("m089", "home_team"),
+    "m076": ("m089", "away_team"),
+    "m075": ("m090", "home_team"),
+    "m078": ("m090", "away_team"),
+    "m084": ("m091", "home_team"),
+    "m083": ("m091", "away_team"),
+    "m082": ("m092", "home_team"),
+    "m081": ("m092", "away_team"),
+    "m074": ("m093", "home_team"),
+    "m077": ("m093", "away_team"),
+    "m079": ("m094", "home_team"),
+    "m080": ("m094", "away_team"),
+    "m087": ("m095", "home_team"),
+    "m086": ("m095", "away_team"),
+    "m085": ("m096", "home_team"),
+    "m088": ("m096", "away_team"),
+}
 STAGE_PROGRESS = {
     "group_stage": 0,
     "round_of_32": 1,
@@ -153,7 +171,7 @@ def money(value: float) -> float:
 
 
 def payout_for_team(team: dict, settings: dict) -> float:
-    stage = team.get("best_stage") or team.get("exit_stage")
+    stage = team.get("exit_stage") if team.get("status") == "eliminated" else team.get("best_stage")
     return money(settings["payouts"].get(stage, 0))
 
 
@@ -233,6 +251,12 @@ def infer_winner(match: dict) -> str | None:
 
 
 def advance_winner(matches: list[dict], match: dict, winner: str) -> bool:
+    explicit_target = ADVANCEMENT_TARGETS.get(match.get("id", ""))
+    if explicit_target:
+        target_id, side = explicit_target
+        target = next((item for item in matches if item.get("id") == target_id), None)
+        return set_if_changed(target, side, winner) if target else False
+
     next_stage = NEXT_STAGE.get(match.get("stage"))
     if not next_stage:
         return False

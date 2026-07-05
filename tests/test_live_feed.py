@@ -1,6 +1,7 @@
 from copy import deepcopy
 
-from app.live_feed import merge_football_data_matches
+from app.calculations import apply_tournament_results
+from app.live_feed import find_local_match, merge_football_data_matches
 from app.seed import SETTINGS, initial_matches, initial_teams
 
 
@@ -76,3 +77,47 @@ def test_football_data_merge_skips_null_team_names():
     ]
 
     assert merge_football_data_matches(state, api_matches, persist=False) == 0
+
+
+def test_find_local_match_prefers_closest_kickoff_for_duplicate_teams():
+    matches = [
+        {
+            "id": "early",
+            "date": "2026-07-01T00:00:00Z",
+            "home_team": "United States",
+            "away_team": "Bosnia and Herzegovina",
+        },
+        {
+            "id": "midnight-uk",
+            "date": "2026-07-02T00:00:00Z",
+            "home_team": "Bosnia and Herzegovina",
+            "away_team": "United States",
+        },
+    ]
+
+    match = find_local_match(matches, "united states", "bosnia and herzegovina", "2026-07-02T00:00:00Z")
+
+    assert match["id"] == "midnight-uk"
+
+
+def test_round_of_32_winners_advance_to_confirmed_round_of_16_bracket():
+    matches = initial_matches()
+    teams = initial_teams()
+
+    assert apply_tournament_results(matches, teams) is True
+
+    round_of_16 = {match["id"]: match for match in matches if match["stage"] == "round_of_16"}
+    assert (round_of_16["m089"]["home_team"], round_of_16["m089"]["away_team"]) == ("Canada", "Morocco")
+    assert (round_of_16["m090"]["home_team"], round_of_16["m090"]["away_team"]) == ("Paraguay", "France")
+    assert (round_of_16["m096"]["home_team"], round_of_16["m096"]["away_team"]) == ("Switzerland", "Colombia")
+
+
+def test_seed_results_loaded_through_completed_july_4_round_of_16_matches():
+    matches = {match["id"]: match for match in initial_matches()}
+
+    assert matches["m082"]["home_score"] == 2
+    assert matches["m082"]["away_score"] == 0
+    assert matches["m088"]["winner"] == "Colombia"
+    assert matches["m089"]["home_score"] == 0
+    assert matches["m089"]["away_score"] == 3
+    assert matches["m090"]["winner"] == "France"

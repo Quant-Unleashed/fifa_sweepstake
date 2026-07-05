@@ -5,10 +5,11 @@
     "owner": "Aman",
     "group": "J",
     "group_position": 2,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "argentina",
@@ -18,6 +19,7 @@
     "group_position": 1,
     "status": "active",
     "exit_stage": null,
+    "best_stage": "round_of_16",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -27,10 +29,11 @@
     "owner": "Aman",
     "group": "D",
     "group_position": 3,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "colombia",
@@ -40,6 +43,7 @@
     "group_position": 2,
     "status": "active",
     "exit_stage": null,
+    "best_stage": "round_of_16",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -51,6 +55,7 @@
     "group_position": 4,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -62,6 +67,7 @@
     "group_position": 1,
     "status": "active",
     "exit_stage": null,
+    "best_stage": "round_of_16",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -73,6 +79,7 @@
     "group_position": 4,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -84,6 +91,7 @@
     "group_position": 1,
     "status": "active",
     "exit_stage": null,
+    "best_stage": "round_of_16",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -95,6 +103,7 @@
     "group_position": 3,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -106,8 +115,9 @@
     "group_position": 2,
     "status": "eliminated",
     "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "sweden",
@@ -115,10 +125,11 @@
     "owner": "Aman",
     "group": "F",
     "group_position": 3,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "turkiye",
@@ -128,6 +139,7 @@
     "group_position": 4,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -137,10 +149,11 @@
     "owner": "Antonie",
     "group": "J",
     "group_position": 3,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "bosnia-and-herzegovina",
@@ -148,10 +161,11 @@
     "owner": "Antonie",
     "group": "B",
     "group_position": 2,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "canada",
@@ -159,11 +173,11 @@
     "owner": "Antonie",
     "group": "B",
     "group_position": 1,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_16",
+    "best_stage": "round_of_16",
     "manual_title_probability": null,
-    "notes": "",
-    "best_stage": "round_of_16"
+    "notes": ""
   },
   {
     "id": "france",
@@ -173,6 +187,7 @@
     "group_position": 1,
     "status": "active",
     "exit_stage": null,
+    "best_stage": "quarterfinal",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -184,8 +199,9 @@
     "group_position": 1,
     "status": "eliminated",
     "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "ghana",
@@ -193,10 +209,11 @@
     "owner": "Antonie",
     "group": "L",
     "group_position": 3,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "japan",
@@ -206,8 +223,9 @@
     "group_position": 2,
     "status": "eliminated",
     "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "morocco",
@@ -217,9 +235,9 @@
     "group_position": 2,
     "status": "active",
     "exit_stage": null,
+    "best_stage": "quarterfinal",
     "manual_title_probability": null,
-    "notes": "",
-    "best_stage": "round_of_16"
+    "notes": ""
   },
   {
     "id": "paraguay",
@@ -227,11 +245,11 @@
     "owner": "Antonie",
     "group": "D",
     "group_position": 2,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_16",
+    "best_stage": "round_of_16",
     "manual_title_probability": null,
-    "notes": "",
-    "best_stage": "round_of_16"
+    "notes": ""
   },
   {
     "id": "qatar",
@@ -241,6 +259,7 @@
     "group_position": 3,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -250,10 +269,11 @@
     "owner": "Antonie",
     "group": "I",
     "group_position": 2,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "tunisia",
@@ -263,6 +283,7 @@
     "group_position": 4,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -274,6 +295,7 @@
     "group_position": 1,
     "status": "active",
     "exit_stage": null,
+    "best_stage": "round_of_16",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -285,9 +307,9 @@
     "group_position": 1,
     "status": "active",
     "exit_stage": null,
+    "best_stage": "round_of_16",
     "manual_title_probability": null,
-    "notes": "",
-    "best_stage": "round_of_16"
+    "notes": ""
   },
   {
     "id": "cape-verde",
@@ -295,10 +317,11 @@
     "owner": "Chris",
     "group": "H",
     "group_position": 2,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "congo-dr",
@@ -306,10 +329,11 @@
     "owner": "Chris",
     "group": "K",
     "group_position": 4,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "ecuador",
@@ -317,10 +341,11 @@
     "owner": "Chris",
     "group": "E",
     "group_position": 4,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "england",
@@ -330,6 +355,7 @@
     "group_position": 1,
     "status": "active",
     "exit_stage": null,
+    "best_stage": "round_of_16",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -341,6 +367,7 @@
     "group_position": 3,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -352,6 +379,7 @@
     "group_position": 4,
     "status": "active",
     "exit_stage": null,
+    "best_stage": "round_of_16",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -363,6 +391,7 @@
     "group_position": 4,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -374,6 +403,7 @@
     "group_position": 4,
     "status": "active",
     "exit_stage": null,
+    "best_stage": "round_of_16",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -385,6 +415,7 @@
     "group_position": 4,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -396,6 +427,7 @@
     "group_position": 3,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -405,10 +437,11 @@
     "owner": "Neesha",
     "group": "E",
     "group_position": 3,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "croatia",
@@ -416,10 +449,11 @@
     "owner": "Neesha",
     "group": "L",
     "group_position": 2,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "curacao",
@@ -429,6 +463,7 @@
     "group_position": 2,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -440,6 +475,7 @@
     "group_position": 2,
     "status": "active",
     "exit_stage": null,
+    "best_stage": "round_of_16",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -451,6 +487,7 @@
     "group_position": 3,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -462,6 +499,7 @@
     "group_position": 3,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -473,6 +511,7 @@
     "group_position": 4,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -484,8 +523,9 @@
     "group_position": 1,
     "status": "eliminated",
     "exit_stage": "round_of_32",
+    "best_stage": null,
     "manual_title_probability": null,
-    "notes": ""
+    "notes": "Eliminated in the Round of 32."
   },
   {
     "id": "scotland",
@@ -495,6 +535,7 @@
     "group_position": 4,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -506,6 +547,7 @@
     "group_position": 3,
     "status": "eliminated",
     "exit_stage": "group_stage",
+    "best_stage": null,
     "manual_title_probability": null,
     "notes": "Eliminated before the Round of 32."
   },
@@ -517,6 +559,7 @@
     "group_position": 1,
     "status": "active",
     "exit_stage": null,
+    "best_stage": "round_of_16",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -528,6 +571,7 @@
     "group_position": 1,
     "status": "active",
     "exit_stage": null,
+    "best_stage": "round_of_16",
     "manual_title_probability": null,
     "notes": ""
   }

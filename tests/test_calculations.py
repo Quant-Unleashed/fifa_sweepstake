@@ -52,9 +52,10 @@ def test_rank_performance_title_probability_still_sums_to_one():
 
 def test_manual_probability_uses_remaining_pool_for_unset_teams():
     teams = initial_teams()
-    teams[0]["manual_title_probability"] = 0.25
+    team = next(team for team in teams if team["status"] == "active")
+    team["manual_title_probability"] = 0.25
     probabilities = title_probabilities(teams)
-    assert probabilities[teams[0]["name"]] == 0.25
+    assert probabilities[team["name"]] == 0.25
     assert round(sum(probabilities.values()), 6) == 1
 
 
@@ -173,23 +174,23 @@ def test_match_probability_preserves_explicit_provider_probability():
 def test_knockout_result_eliminates_loser_and_advances_winner():
     teams = initial_teams()
     matches = initial_matches()
-    match = next(item for item in matches if item["id"] == "m073")
+    match = next(item for item in matches if item["id"] == "m091")
     match["status"] = "finished"
-    match["home_score"] = 1
-    match["away_score"] = 2
+    match["home_score"] = 2
+    match["away_score"] = 1
 
     assert apply_tournament_results(matches, teams) is True
 
-    south_africa = next(team for team in teams if team["name"] == "South Africa")
-    canada = next(team for team in teams if team["name"] == "Canada")
-    next_match = next(item for item in matches if item["id"] == "m089")
-    assert match["winner"] == "Canada"
-    assert south_africa["status"] == "eliminated"
-    assert south_africa["exit_stage"] == "round_of_32"
-    assert canada["status"] == "active"
-    assert canada["exit_stage"] is None
-    assert canada["best_stage"] == "round_of_16"
-    assert next_match["home_team"] == "Canada"
+    portugal = next(team for team in teams if team["name"] == "Portugal")
+    spain = next(team for team in teams if team["name"] == "Spain")
+    next_match = next(item for item in matches if item["id"] == "m098")
+    assert match["winner"] == "Portugal"
+    assert spain["status"] == "eliminated"
+    assert spain["exit_stage"] == "round_of_16"
+    assert portugal["status"] == "active"
+    assert portugal["exit_stage"] is None
+    assert portugal["best_stage"] == "quarterfinal"
+    assert next_match["home_team"] == "Portugal"
 
 
 def test_round_of_16_teams_are_guaranteed_paid_stage_money():
@@ -198,11 +199,12 @@ def test_round_of_16_teams_are_guaranteed_paid_stage_money():
     apply_tournament_results(matches, teams)
     summaries = player_summaries(teams, SETTINGS, matches=matches)
     antonie = next(summary for summary in summaries if summary["name"] == "Antonie")
-    assert antonie["confirmed_winnings"] == 3
-    assert antonie["actual_profit"] == -9
+    assert antonie["confirmed_winnings"] == 6
+    assert antonie["actual_profit"] == -6
     assert payout_for_team(next(team for team in teams if team["name"] == "Canada"), SETTINGS) == 1
     assert payout_for_team(next(team for team in teams if team["name"] == "Paraguay"), SETTINGS) == 1
-    assert payout_for_team(next(team for team in teams if team["name"] == "Morocco"), SETTINGS) == 1
+    assert payout_for_team(next(team for team in teams if team["name"] == "Morocco"), SETTINGS) == 2
+    assert payout_for_team(next(team for team in teams if team["name"] == "France"), SETTINGS) == 2
 
 
 def test_final_result_confirms_runner_up_and_winner_payouts():

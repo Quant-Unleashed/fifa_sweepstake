@@ -139,12 +139,38 @@ ROUND_OF_32_RESULTS = {
     2: {"home_score": 2, "away_score": 1, "winner": "Brazil"},
     3: {"home_score": 1, "away_score": 1, "winner": "Paraguay", "notes": "Paraguay advanced on penalties."},
     4: {"home_score": 1, "away_score": 1, "winner": "Morocco", "notes": "Morocco advanced on penalties."},
+    5: {"home_score": 1, "away_score": 2, "winner": "Norway"},
+    6: {"home_score": 3, "away_score": 0, "winner": "France"},
+    7: {"home_score": 2, "away_score": 0, "winner": "Mexico"},
+    8: {"home_score": 2, "away_score": 1, "winner": "England"},
+    9: {"home_score": 3, "away_score": 2, "winner": "Belgium", "notes": "Belgium advanced after extra time."},
+    10: {"home_score": 2, "away_score": 0, "winner": "United States"},
+    11: {"home_score": 3, "away_score": 0, "winner": "Spain"},
+    12: {"home_score": 2, "away_score": 1, "winner": "Portugal"},
+    13: {"home_score": 2, "away_score": 0, "winner": "Switzerland"},
+    14: {"home_score": 1, "away_score": 1, "winner": "Egypt", "notes": "Egypt advanced on penalties."},
+    15: {"home_score": 3, "away_score": 2, "winner": "Argentina"},
+    16: {"home_score": 1, "away_score": 0, "winner": "Colombia"},
 }
 
-ADVANCED_BEST_STAGES = {
-    result["winner"]: "round_of_16"
-    for result in ROUND_OF_32_RESULTS.values()
+ROUND_OF_16_FIXTURES = {
+    "m089": ("2026-07-04T16:00:00Z", "Canada", "Morocco", "Philadelphia Stadium"),
+    "m090": ("2026-07-04T20:00:00Z", "Paraguay", "France", "New York/New Jersey Stadium"),
+    "m091": ("2026-07-05T16:00:00Z", "Portugal", "Spain", "Cincinnati Stadium"),
+    "m092": ("2026-07-05T20:00:00Z", "United States", "Belgium", "Seattle Stadium"),
+    "m093": ("2026-07-06T16:00:00Z", "Brazil", "Norway", "New York/New Jersey Stadium"),
+    "m094": ("2026-07-06T20:00:00Z", "Mexico", "England", "Dallas Stadium"),
+    "m095": ("2026-07-07T16:00:00Z", "Argentina", "Egypt", "Los Angeles Stadium"),
+    "m096": ("2026-07-07T20:00:00Z", "Switzerland", "Colombia", "Miami Stadium"),
 }
+
+ROUND_OF_16_RESULTS = {
+    "m089": {"home_score": 0, "away_score": 3, "winner": "Morocco"},
+    "m090": {"home_score": 0, "away_score": 1, "winner": "France"},
+}
+
+ADVANCED_BEST_STAGES = {result["winner"]: "round_of_16" for result in ROUND_OF_32_RESULTS.values()}
+ADVANCED_BEST_STAGES.update({result["winner"]: "quarterfinal" for result in ROUND_OF_16_RESULTS.values()})
 
 
 def slugify(value: str) -> str:
@@ -262,21 +288,31 @@ def initial_matches() -> list[dict]:
                 }
             )
             match_number += 1
-    round_of_16_advancements = {
-        "m089": {"home_team": "Canada", "away_team": "Brazil"},
-        "m090": {"home_team": "Paraguay", "away_team": "Morocco"},
-    }
     for match in matches:
-        if match["id"] in round_of_16_advancements:
-            match.update(round_of_16_advancements[match["id"]])
+        if match["id"] in ROUND_OF_16_FIXTURES:
+            date, home_team, away_team, location = ROUND_OF_16_FIXTURES[match["id"]]
+            result = ROUND_OF_16_RESULTS.get(match["id"], {})
+            match.update(
+                {
+                    "date": date,
+                    "home_team": home_team,
+                    "away_team": away_team,
+                    "home_score": result.get("home_score"),
+                    "away_score": result.get("away_score"),
+                    "status": "finished" if result else "scheduled",
+                    "winner": result.get("winner"),
+                    "location": location,
+                    "source": "manual-result" if result else "confirmed-bracket",
+                }
+            )
     return matches
 
 
 def initial_cache() -> dict:
     return {
         "provider": "manual",
-        "last_sync": "2026-06-28T21:35:00+01:00",
-        "message": "Manual Round of 32 results loaded through Netherlands vs Morocco. Missing live results after that unless FOOTBALL_PROVIDER=football-data is configured.",
+        "last_sync": "2026-07-05T00:05:00+01:00",
+        "message": "Manual results loaded through the July 4 Round of 16 matches. Configure FOOTBALL_PROVIDER=football-data and FOOTBALL_DATA_API_KEY for live sync.",
         "raw_count": len(ROUND_OF_32_FIXTURES),
     }
 

@@ -1,6 +1,6 @@
 {
   "provider": "manual",
-  "last_sync": "2026-06-28T21:35:00+01:00",
-  "message": "Manual Round of 32 results loaded through Netherlands vs Morocco. Missing live results after that unless FOOTBALL_PROVIDER=football-data is configured.",
+  "last_sync": "2026-07-05T00:05:00+01:00",
+  "message": "Manual results loaded through the July 4 Round of 16 matches. Configure FOOTBALL_PROVIDER=football-data and FOOTBALL_DATA_API_KEY for live sync.",
   "raw_count": 16
 }
