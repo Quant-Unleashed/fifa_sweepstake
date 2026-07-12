@@ -171,53 +171,57 @@ def test_match_probability_preserves_explicit_provider_probability():
     assert match_probability(match, "home") == 0.7
 
 
-def test_knockout_result_eliminates_loser_and_advances_winner():
+def test_decisive_scores_override_stale_winner_and_advance_open_semifinal_slot():
     teams = initial_teams()
     matches = initial_matches()
-    match = next(item for item in matches if item["id"] == "m091")
+    match = next(item for item in matches if item["id"] == "m100")
     match["status"] = "finished"
     match["home_score"] = 2
-    match["away_score"] = 1
+    match["away_score"] = 0
+    match["winner"] = "Switzerland"
 
     assert apply_tournament_results(matches, teams) is True
 
-    portugal = next(team for team in teams if team["name"] == "Portugal")
-    spain = next(team for team in teams if team["name"] == "Spain")
-    next_match = next(item for item in matches if item["id"] == "m098")
-    assert match["winner"] == "Portugal"
-    assert spain["status"] == "eliminated"
-    assert spain["exit_stage"] == "round_of_16"
-    assert portugal["status"] == "active"
-    assert portugal["exit_stage"] is None
-    assert portugal["best_stage"] == "quarterfinal"
-    assert next_match["home_team"] == "Portugal"
+    argentina = next(team for team in teams if team["name"] == "Argentina")
+    switzerland = next(team for team in teams if team["name"] == "Switzerland")
+    next_match = next(item for item in matches if item["id"] == "m102")
+    assert match["winner"] == "Argentina"
+    assert switzerland["status"] == "eliminated"
+    assert switzerland["exit_stage"] == "quarterfinal"
+    assert argentina["status"] == "active"
+    assert argentina["exit_stage"] is None
+    assert argentina["best_stage"] == "semifinal"
+    assert next_match["away_team"] == "Argentina"
 
 
-def test_round_of_16_teams_are_guaranteed_paid_stage_money():
+def test_late_knockout_teams_are_guaranteed_current_stage_money():
     teams = initial_teams()
     matches = initial_matches()
     apply_tournament_results(matches, teams)
     summaries = player_summaries(teams, SETTINGS, matches=matches)
     antonie = next(summary for summary in summaries if summary["name"] == "Antonie")
-    assert antonie["confirmed_winnings"] == 6
-    assert antonie["actual_profit"] == -6
+    assert antonie["confirmed_winnings"] == 8
+    assert antonie["actual_profit"] == -4
     assert payout_for_team(next(team for team in teams if team["name"] == "Canada"), SETTINGS) == 1
     assert payout_for_team(next(team for team in teams if team["name"] == "Paraguay"), SETTINGS) == 1
     assert payout_for_team(next(team for team in teams if team["name"] == "Morocco"), SETTINGS) == 2
-    assert payout_for_team(next(team for team in teams if team["name"] == "France"), SETTINGS) == 2
+    assert payout_for_team(next(team for team in teams if team["name"] == "France"), SETTINGS) == 4
+    assert payout_for_team(next(team for team in teams if team["name"] == "England"), SETTINGS) == 4
 
 
-def test_stale_quarterfinal_duplicate_is_cleared_when_sources_unfinished():
+def test_confirmed_quarterfinal_order_is_preserved_during_reconciliation():
     teams = initial_teams()
     matches = initial_matches()
-    quarterfinal = next(item for item in matches if item["id"] == "m098")
-    quarterfinal["home_team"] = "Morocco"
-    quarterfinal["away_team"] = "France"
 
     assert apply_tournament_results(matches, teams) is True
 
-    assert quarterfinal["home_team"] == "Quarterfinal team 2A"
-    assert quarterfinal["away_team"] == "Quarterfinal team 2B"
+    quarterfinals = {item["id"]: item for item in matches if item["stage"] == "quarterfinal"}
+    semifinals = {item["id"]: item for item in matches if item["stage"] == "semifinal"}
+    assert (quarterfinals["m097"]["home_team"], quarterfinals["m097"]["away_team"]) == ("France", "Morocco")
+    assert (quarterfinals["m098"]["home_team"], quarterfinals["m098"]["away_team"]) == ("Spain", "Belgium")
+    assert (quarterfinals["m099"]["home_team"], quarterfinals["m099"]["away_team"]) == ("Norway", "England")
+    assert (semifinals["m101"]["home_team"], semifinals["m101"]["away_team"]) == ("France", "Spain")
+    assert (semifinals["m102"]["home_team"], semifinals["m102"]["away_team"]) == ("England", "Semifinal team 2B")
 
 
 def test_current_tournament_reconciliation_is_idempotent():

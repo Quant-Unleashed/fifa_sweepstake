@@ -1,5 +1,68 @@
 [
   {
+    "id": "alert-m099",
+    "match_id": "m099",
+    "title": "Norway 1-2 England",
+    "body": "Chris: Norway eliminated, confirmed payout \u00a32. Chris: England won and stays alive.",
+    "whatsapp_text": "Norway 1-2 England\n\nImpact:\n- Chris: Norway eliminated, confirmed payout \u00a32.\n- Chris: England won and stays alive."
+  },
+  {
+    "id": "alert-m098",
+    "match_id": "m098",
+    "title": "Spain 2-1 Belgium",
+    "body": "Neesha: Spain won and stays alive. Chris: Belgium eliminated, confirmed payout \u00a32.",
+    "whatsapp_text": "Spain 2-1 Belgium\n\nImpact:\n- Neesha: Spain won and stays alive.\n- Chris: Belgium eliminated, confirmed payout \u00a32."
+  },
+  {
+    "id": "alert-m097",
+    "match_id": "m097",
+    "title": "France 2-0 Morocco",
+    "body": "Antonie: France won and stays alive. Antonie: Morocco eliminated, confirmed payout \u00a32.",
+    "whatsapp_text": "France 2-0 Morocco\n\nImpact:\n- Antonie: France won and stays alive.\n- Antonie: Morocco eliminated, confirmed payout \u00a32."
+  },
+  {
+    "id": "alert-m096",
+    "match_id": "m096",
+    "title": "Switzerland 0-0 Colombia",
+    "body": "Chris: Switzerland won and stays alive. Aman: Colombia eliminated, confirmed payout \u00a31.",
+    "whatsapp_text": "Switzerland 0-0 Colombia\n\nImpact:\n- Chris: Switzerland won and stays alive.\n- Aman: Colombia eliminated, confirmed payout \u00a31."
+  },
+  {
+    "id": "alert-m095",
+    "match_id": "m095",
+    "title": "Argentina 3-2 Egypt",
+    "body": "Aman: Argentina won and stays alive. Neesha: Egypt eliminated, confirmed payout \u00a31.",
+    "whatsapp_text": "Argentina 3-2 Egypt\n\nImpact:\n- Aman: Argentina won and stays alive.\n- Neesha: Egypt eliminated, confirmed payout \u00a31."
+  },
+  {
+    "id": "alert-m094",
+    "match_id": "m094",
+    "title": "Mexico 2-3 England",
+    "body": "Aman: Mexico eliminated, confirmed payout \u00a31. Chris: England won and stays alive.",
+    "whatsapp_text": "Mexico 2-3 England\n\nImpact:\n- Aman: Mexico eliminated, confirmed payout \u00a31.\n- Chris: England won and stays alive."
+  },
+  {
+    "id": "alert-m093",
+    "match_id": "m093",
+    "title": "Brazil 1-2 Norway",
+    "body": "Chris: Brazil eliminated, confirmed payout \u00a31. Chris: Norway eliminated, confirmed payout \u00a32.",
+    "whatsapp_text": "Brazil 1-2 Norway\n\nImpact:\n- Chris: Brazil eliminated, confirmed payout \u00a31.\n- Chris: Norway eliminated, confirmed payout \u00a32."
+  },
+  {
+    "id": "alert-m092",
+    "match_id": "m092",
+    "title": "United States 1-4 Belgium",
+    "body": "Neesha: United States eliminated, confirmed payout \u00a31. Chris: Belgium eliminated, confirmed payout \u00a32.",
+    "whatsapp_text": "United States 1-4 Belgium\n\nImpact:\n- Neesha: United States eliminated, confirmed payout \u00a31.\n- Chris: Belgium eliminated, confirmed payout \u00a32."
+  },
+  {
+    "id": "alert-m091",
+    "match_id": "m091",
+    "title": "Portugal 0-1 Spain",
+    "body": "Aman: Portugal eliminated, confirmed payout \u00a31. Neesha: Spain won and stays alive.",
+    "whatsapp_text": "Portugal 0-1 Spain\n\nImpact:\n- Aman: Portugal eliminated, confirmed payout \u00a31.\n- Neesha: Spain won and stays alive."
+  },
+  {
     "id": "alert-m090",
     "match_id": "m090",
     "title": "Paraguay 0-1 France",
@@ -10,15 +73,15 @@
     "id": "alert-m089",
     "match_id": "m089",
     "title": "Canada 0-3 Morocco",
-    "body": "Antonie: Canada eliminated, confirmed payout \u00a31. Antonie: Morocco won and stays alive.",
-    "whatsapp_text": "Canada 0-3 Morocco\n\nImpact:\n- Antonie: Canada eliminated, confirmed payout \u00a31.\n- Antonie: Morocco won and stays alive."
+    "body": "Antonie: Canada eliminated, confirmed payout \u00a31. Antonie: Morocco eliminated, confirmed payout \u00a32.",
+    "whatsapp_text": "Canada 0-3 Morocco\n\nImpact:\n- Antonie: Canada eliminated, confirmed payout \u00a31.\n- Antonie: Morocco eliminated, confirmed payout \u00a32."
   },
   {
     "id": "alert-m088",
     "match_id": "m088",
     "title": "Colombia 1-0 Ghana",
-    "body": "Aman: Colombia won and stays alive. Antonie: Ghana eliminated, confirmed payout \u00a30.",
-    "whatsapp_text": "Colombia 1-0 Ghana\n\nImpact:\n- Aman: Colombia won and stays alive.\n- Antonie: Ghana eliminated, confirmed payout \u00a30."
+    "body": "Aman: Colombia eliminated, confirmed payout \u00a31. Antonie: Ghana eliminated, confirmed payout \u00a30.",
+    "whatsapp_text": "Colombia 1-0 Ghana\n\nImpact:\n- Aman: Colombia eliminated, confirmed payout \u00a31.\n- Antonie: Ghana eliminated, confirmed payout \u00a30."
   },
   {
     "id": "alert-m087",
@@ -31,8 +94,8 @@
     "id": "alert-m086",
     "match_id": "m086",
     "title": "Australia 1-1 Egypt",
-    "body": "Aman: Australia eliminated, confirmed payout \u00a30. Neesha: Egypt won and stays alive.",
-    "whatsapp_text": "Australia 1-1 Egypt\n\nImpact:\n- Aman: Australia eliminated, confirmed payout \u00a30.\n- Neesha: Egypt won and stays alive."
+    "body": "Aman: Australia eliminated, confirmed payout \u00a30. Neesha: Egypt eliminated, confirmed payout \u00a31.",
+    "whatsapp_text": "Australia 1-1 Egypt\n\nImpact:\n- Aman: Australia eliminated, confirmed payout \u00a30.\n- Neesha: Egypt eliminated, confirmed payout \u00a31."
   },
   {
     "id": "alert-m085",
@@ -45,8 +108,8 @@
     "id": "alert-m084",
     "match_id": "m084",
     "title": "Portugal 2-1 Croatia",
-    "body": "Aman: Portugal won and stays alive. Neesha: Croatia eliminated, confirmed payout \u00a30.",
-    "whatsapp_text": "Portugal 2-1 Croatia\n\nImpact:\n- Aman: Portugal won and stays alive.\n- Neesha: Croatia eliminated, confirmed payout \u00a30."
+    "body": "Aman: Portugal eliminated, confirmed payout \u00a31. Neesha: Croatia eliminated, confirmed payout \u00a30.",
+    "whatsapp_text": "Portugal 2-1 Croatia\n\nImpact:\n- Aman: Portugal eliminated, confirmed payout \u00a31.\n- Neesha: Croatia eliminated, confirmed payout \u00a30."
   },
   {
     "id": "alert-m083",
@@ -59,15 +122,15 @@
     "id": "alert-m082",
     "match_id": "m082",
     "title": "United States 2-0 Bosnia and Herzegovina",
-    "body": "Neesha: United States won and stays alive. Antonie: Bosnia and Herzegovina eliminated, confirmed payout \u00a30.",
-    "whatsapp_text": "United States 2-0 Bosnia and Herzegovina\n\nImpact:\n- Neesha: United States won and stays alive.\n- Antonie: Bosnia and Herzegovina eliminated, confirmed payout \u00a30."
+    "body": "Neesha: United States eliminated, confirmed payout \u00a31. Antonie: Bosnia and Herzegovina eliminated, confirmed payout \u00a30.",
+    "whatsapp_text": "United States 2-0 Bosnia and Herzegovina\n\nImpact:\n- Neesha: United States eliminated, confirmed payout \u00a31.\n- Antonie: Bosnia and Herzegovina eliminated, confirmed payout \u00a30."
   },
   {
     "id": "alert-m081",
     "match_id": "m081",
     "title": "Belgium 3-2 Senegal",
-    "body": "Chris: Belgium won and stays alive. Antonie: Senegal eliminated, confirmed payout \u00a30.",
-    "whatsapp_text": "Belgium 3-2 Senegal\n\nImpact:\n- Chris: Belgium won and stays alive.\n- Antonie: Senegal eliminated, confirmed payout \u00a30."
+    "body": "Chris: Belgium eliminated, confirmed payout \u00a32. Antonie: Senegal eliminated, confirmed payout \u00a30.",
+    "whatsapp_text": "Belgium 3-2 Senegal\n\nImpact:\n- Chris: Belgium eliminated, confirmed payout \u00a32.\n- Antonie: Senegal eliminated, confirmed payout \u00a30."
   },
   {
     "id": "alert-m080",
@@ -80,8 +143,8 @@
     "id": "alert-m079",
     "match_id": "m079",
     "title": "Mexico 2-0 Ecuador",
-    "body": "Aman: Mexico won and stays alive. Chris: Ecuador eliminated, confirmed payout \u00a30.",
-    "whatsapp_text": "Mexico 2-0 Ecuador\n\nImpact:\n- Aman: Mexico won and stays alive.\n- Chris: Ecuador eliminated, confirmed payout \u00a30."
+    "body": "Aman: Mexico eliminated, confirmed payout \u00a31. Chris: Ecuador eliminated, confirmed payout \u00a30.",
+    "whatsapp_text": "Mexico 2-0 Ecuador\n\nImpact:\n- Aman: Mexico eliminated, confirmed payout \u00a31.\n- Chris: Ecuador eliminated, confirmed payout \u00a30."
   },
   {
     "id": "alert-m078",
@@ -94,15 +157,15 @@
     "id": "alert-m077",
     "match_id": "m077",
     "title": "Cote d'Ivoire 1-2 Norway",
-    "body": "Neesha: Cote d'Ivoire eliminated, confirmed payout \u00a30. Chris: Norway won and stays alive.",
-    "whatsapp_text": "Cote d'Ivoire 1-2 Norway\n\nImpact:\n- Neesha: Cote d'Ivoire eliminated, confirmed payout \u00a30.\n- Chris: Norway won and stays alive."
+    "body": "Neesha: Cote d'Ivoire eliminated, confirmed payout \u00a30. Chris: Norway eliminated, confirmed payout \u00a32.",
+    "whatsapp_text": "Cote d'Ivoire 1-2 Norway\n\nImpact:\n- Neesha: Cote d'Ivoire eliminated, confirmed payout \u00a30.\n- Chris: Norway eliminated, confirmed payout \u00a32."
   },
   {
     "id": "alert-m076",
     "match_id": "m076",
     "title": "Netherlands 1-1 Morocco",
-    "body": "Neesha: Netherlands eliminated, confirmed payout \u00a30. Antonie: Morocco won and stays alive.",
-    "whatsapp_text": "Netherlands 1-1 Morocco\n\nImpact:\n- Neesha: Netherlands eliminated, confirmed payout \u00a30.\n- Antonie: Morocco won and stays alive."
+    "body": "Neesha: Netherlands eliminated, confirmed payout \u00a30. Antonie: Morocco eliminated, confirmed payout \u00a32.",
+    "whatsapp_text": "Netherlands 1-1 Morocco\n\nImpact:\n- Neesha: Netherlands eliminated, confirmed payout \u00a30.\n- Antonie: Morocco eliminated, confirmed payout \u00a32."
   },
   {
     "id": "alert-m075",
@@ -115,8 +178,8 @@
     "id": "alert-m074",
     "match_id": "m074",
     "title": "Brazil 2-1 Japan",
-    "body": "Chris: Brazil won and stays alive. Antonie: Japan eliminated, confirmed payout \u00a30.",
-    "whatsapp_text": "Brazil 2-1 Japan\n\nImpact:\n- Chris: Brazil won and stays alive.\n- Antonie: Japan eliminated, confirmed payout \u00a30."
+    "body": "Chris: Brazil eliminated, confirmed payout \u00a31. Antonie: Japan eliminated, confirmed payout \u00a30.",
+    "whatsapp_text": "Brazil 2-1 Japan\n\nImpact:\n- Chris: Brazil eliminated, confirmed payout \u00a31.\n- Antonie: Japan eliminated, confirmed payout \u00a30."
   },
   {
     "id": "alert-m073",

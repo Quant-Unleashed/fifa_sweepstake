@@ -213,7 +213,7 @@ def apply_tournament_results(matches: list[dict], teams: list[dict]) -> bool:
         if match.get("stage") not in ADVANCEMENT_STAGES or not match_finished(match):
             continue
 
-        winner = match.get("winner") or infer_winner(match)
+        winner = infer_winner(match)
         if not winner:
             continue
         changed |= set_if_changed(match, "winner", winner)
@@ -279,7 +279,7 @@ def advance_winner(matches: list[dict], match: dict, winner: str) -> bool:
     if explicit_target:
         target_id, side = explicit_target
         target = next((item for item in matches if item.get("id") == target_id), None)
-        return set_if_changed(target, side, winner) if target else False
+        return set_advancement_slot(target, side, winner) if target else False
 
     next_stage = NEXT_STAGE.get(match.get("stage"))
     if not next_stage:
@@ -294,6 +294,13 @@ def advance_winner(matches: list[dict], match: dict, winner: str) -> bool:
     if not target:
         return False
     side = "home_team" if current_index % 2 == 0 else "away_team"
+    return set_advancement_slot(target, side, winner)
+
+
+def set_advancement_slot(target: dict, side: str, winner: str) -> bool:
+    current = target.get(side)
+    if is_real_team_name(current) and current != winner and target.get("source") != "placeholder":
+        return False
     return set_if_changed(target, side, winner)
 
 
