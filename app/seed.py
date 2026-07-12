@@ -110,9 +110,9 @@ SETTINGS = {
 KNOCKOUT_PLACEHOLDERS = [
     ("round_of_16", "Round of 16", "2026-07-04", 8),
     ("quarterfinal", "Quarterfinal", "2026-07-09", 4),
-    ("semifinal", "Semifinal", "2026-07-14", 2),
-    ("third_place", "Third-place match", "2026-07-18", 1),
-    ("final", "Final", "2026-07-19", 1),
+    ("semifinal", "Semifinal", "2026-07-14T19:00:00Z", 2),
+    ("third_place", "Third-place match", "2026-07-18T21:00:00Z", 1),
+    ("final", "Final", "2026-07-19T19:00:00Z", 1),
 ]
 
 ROUND_OF_32_FIXTURES = [
@@ -167,6 +167,30 @@ ROUND_OF_16_FIXTURES = {
 ROUND_OF_16_RESULTS = {
     "m089": {"home_score": 0, "away_score": 3, "winner": "Morocco"},
     "m090": {"home_score": 0, "away_score": 1, "winner": "France"},
+    "m091": {"home_score": 0, "away_score": 1, "winner": "Spain"},
+    "m092": {"home_score": 1, "away_score": 4, "winner": "Belgium"},
+    "m093": {"home_score": 1, "away_score": 2, "winner": "Norway"},
+    "m094": {"home_score": 2, "away_score": 3, "winner": "England"},
+    "m095": {"home_score": 3, "away_score": 2, "winner": "Argentina"},
+    "m096": {"home_score": 0, "away_score": 0, "winner": "Switzerland", "notes": "Switzerland advanced 4-3 on penalties."},
+}
+
+QUARTERFINAL_FIXTURES = {
+    "m097": ("2026-07-09T20:00:00Z", "France", "Morocco", "Boston Stadium"),
+    "m098": ("2026-07-10T19:00:00Z", "Spain", "Belgium", "Los Angeles Stadium"),
+    "m099": ("2026-07-11T21:00:00Z", "Norway", "England", "Miami Stadium"),
+    "m100": ("2026-07-12T01:00:00Z", "Argentina", "Switzerland", "Kansas City Stadium"),
+}
+
+QUARTERFINAL_RESULTS = {
+    "m097": {"home_score": 2, "away_score": 0, "winner": "France"},
+    "m098": {"home_score": 2, "away_score": 1, "winner": "Spain"},
+    "m099": {"home_score": 1, "away_score": 2, "winner": "England", "notes": "England advanced after extra time."},
+}
+
+SEMIFINAL_FIXTURES = {
+    "m101": ("2026-07-14T19:00:00Z", "France", "Spain", "Dallas Stadium"),
+    "m102": ("2026-07-15T19:00:00Z", "England", "Semifinal team 2B", "Atlanta Stadium"),
 }
 
 ADVANCED_BEST_STAGES = {result["winner"]: "round_of_16" for result in ROUND_OF_32_RESULTS.values()}
@@ -303,6 +327,35 @@ def initial_matches() -> list[dict]:
                     "winner": result.get("winner"),
                     "location": location,
                     "source": "manual-result" if result else "confirmed-bracket",
+                    "notes": result.get("notes", ""),
+                }
+            )
+        if match["id"] in QUARTERFINAL_FIXTURES:
+            date, home_team, away_team, location = QUARTERFINAL_FIXTURES[match["id"]]
+            result = QUARTERFINAL_RESULTS.get(match["id"], {})
+            match.update(
+                {
+                    "date": date,
+                    "home_team": home_team,
+                    "away_team": away_team,
+                    "home_score": result.get("home_score"),
+                    "away_score": result.get("away_score"),
+                    "status": "finished" if result else "scheduled",
+                    "winner": result.get("winner"),
+                    "location": location,
+                    "source": "manual-result" if result else "confirmed-bracket",
+                    "notes": result.get("notes", ""),
+                }
+            )
+        if match["id"] in SEMIFINAL_FIXTURES:
+            date, home_team, away_team, location = SEMIFINAL_FIXTURES[match["id"]]
+            match.update(
+                {
+                    "date": date,
+                    "home_team": home_team,
+                    "away_team": away_team,
+                    "location": location,
+                    "source": "confirmed-bracket",
                 }
             )
     return matches
@@ -311,9 +364,9 @@ def initial_matches() -> list[dict]:
 def initial_cache() -> dict:
     return {
         "provider": "manual",
-        "last_sync": "2026-07-05T00:05:00+01:00",
-        "message": "Manual results loaded through the July 4 Round of 16 matches. Configure FOOTBALL_PROVIDER=football-data and FOOTBALL_DATA_API_KEY for live sync.",
-        "raw_count": len(ROUND_OF_32_FIXTURES),
+        "last_sync": "2026-07-12T00:30:00+01:00",
+        "message": "Manual results loaded through the completed July 11 quarterfinals. Configure FOOTBALL_PROVIDER=football-data and FOOTBALL_DATA_API_KEY for live sync.",
+        "raw_count": len(ROUND_OF_32_FIXTURES) + len(ROUND_OF_16_FIXTURES) + len(QUARTERFINAL_FIXTURES),
     }
 
 
