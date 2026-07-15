@@ -126,6 +126,90 @@ section {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.finals-hero {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.85fr) minmax(0, 1.6fr);
+  gap: 14px;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid #d7c17e;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 249, 228, 0.9)),
+    repeating-linear-gradient(90deg, rgba(189, 139, 47, 0.14) 0 2px, transparent 2px 18px);
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+
+.finals-copy {
+  display: grid;
+  align-content: center;
+}
+
+.finals-copy span,
+.podium-slot span {
+  color: var(--gold);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.finals-copy h2 {
+  margin: 4px 0 8px;
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
+}
+
+.finals-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.podium {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 10px;
+  align-items: end;
+}
+
+.podium-slot {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  min-height: 126px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 14px;
+}
+
+.podium-slot.top {
+  min-height: 152px;
+  border-color: #d7b24c;
+  background: #fff8df;
+}
+
+.podium-slot.second {
+  background: #f7f9fb;
+}
+
+.podium-slot.third {
+  background: #fff1e5;
+}
+
+.podium-slot strong {
+  font-size: 1.15rem;
+  line-height: 1.25;
+}
+
+.podium-slot em {
+  color: var(--muted);
+  font-style: normal;
+  font-weight: 800;
+}
+
 .metric,
 .match-panel,
 .player-card,
@@ -627,6 +711,16 @@ textarea {
   .standings-grid,
   .admin-list.compact {
     grid-template-columns: 1fr;
+  }
+
+  .finals-hero,
+  .podium {
+    grid-template-columns: 1fr;
+  }
+
+  .podium-slot,
+  .podium-slot.top {
+    min-height: 112px;
   }
 
   .section-heading,

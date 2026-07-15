@@ -186,11 +186,17 @@ QUARTERFINAL_RESULTS = {
     "m097": {"home_score": 2, "away_score": 0, "winner": "France"},
     "m098": {"home_score": 2, "away_score": 1, "winner": "Spain"},
     "m099": {"home_score": 1, "away_score": 2, "winner": "England", "notes": "England advanced after extra time."},
+    "m100": {"home_score": 3, "away_score": 1, "winner": "Argentina", "notes": "Argentina advanced after extra time."},
 }
 
 SEMIFINAL_FIXTURES = {
     "m101": ("2026-07-14T19:00:00Z", "France", "Spain", "Dallas Stadium"),
-    "m102": ("2026-07-15T19:00:00Z", "England", "Semifinal team 2B", "Atlanta Stadium"),
+    "m102": ("2026-07-15T19:00:00Z", "England", "Argentina", "Atlanta Stadium"),
+}
+
+SEMIFINAL_RESULTS = {
+    "m101": {"home_score": 0, "away_score": 2, "winner": "Spain"},
+    "m102": {"home_score": 1, "away_score": 2, "winner": "Argentina"},
 }
 
 ADVANCED_BEST_STAGES = {result["winner"]: "round_of_16" for result in ROUND_OF_32_RESULTS.values()}
@@ -349,13 +355,19 @@ def initial_matches() -> list[dict]:
             )
         if match["id"] in SEMIFINAL_FIXTURES:
             date, home_team, away_team, location = SEMIFINAL_FIXTURES[match["id"]]
+            result = SEMIFINAL_RESULTS.get(match["id"], {})
             match.update(
                 {
                     "date": date,
                     "home_team": home_team,
                     "away_team": away_team,
+                    "home_score": result.get("home_score"),
+                    "away_score": result.get("away_score"),
+                    "status": "finished" if result else "scheduled",
+                    "winner": result.get("winner"),
                     "location": location,
-                    "source": "confirmed-bracket",
+                    "source": "manual-result" if result else "confirmed-bracket",
+                    "notes": result.get("notes", ""),
                 }
             )
     return matches
@@ -364,9 +376,9 @@ def initial_matches() -> list[dict]:
 def initial_cache() -> dict:
     return {
         "provider": "manual",
-        "last_sync": "2026-07-12T00:30:00+01:00",
-        "message": "Manual results loaded through the completed July 11 quarterfinals. Configure FOOTBALL_PROVIDER=football-data and FOOTBALL_DATA_API_KEY for live sync.",
-        "raw_count": len(ROUND_OF_32_FIXTURES) + len(ROUND_OF_16_FIXTURES) + len(QUARTERFINAL_FIXTURES),
+        "last_sync": "2026-07-16T09:00:00+01:00",
+        "message": "Manual results loaded through the completed July 15 semifinals. Configure FOOTBALL_PROVIDER=football-data and FOOTBALL_DATA_API_KEY for live sync.",
+        "raw_count": len(ROUND_OF_32_FIXTURES) + len(ROUND_OF_16_FIXTURES) + len(QUARTERFINAL_FIXTURES) + len(SEMIFINAL_RESULTS),
     }
 
 
