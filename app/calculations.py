@@ -180,6 +180,8 @@ def money(value: float) -> float:
 
 def payout_for_team(team: dict, settings: dict) -> float:
     stage = team.get("exit_stage") if team.get("status") == "eliminated" else team.get("best_stage")
+    if stage == "final":
+        stage = "runner_up"
     return money(settings["payouts"].get(stage, 0))
 
 

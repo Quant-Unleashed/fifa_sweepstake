@@ -201,6 +201,8 @@ SEMIFINAL_RESULTS = {
 
 ADVANCED_BEST_STAGES = {result["winner"]: "round_of_16" for result in ROUND_OF_32_RESULTS.values()}
 ADVANCED_BEST_STAGES.update({result["winner"]: "quarterfinal" for result in ROUND_OF_16_RESULTS.values()})
+ADVANCED_BEST_STAGES.update({result["winner"]: "semifinal" for result in QUARTERFINAL_RESULTS.values()})
+ADVANCED_BEST_STAGES.update({result["winner"]: "final" for result in SEMIFINAL_RESULTS.values()})
 
 
 def slugify(value: str) -> str:

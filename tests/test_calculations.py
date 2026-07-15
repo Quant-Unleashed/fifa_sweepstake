@@ -30,6 +30,8 @@ def test_payout_ladder_for_terminal_stages():
     assert payout_for_team(active_team, SETTINGS) == 1
     active_team["best_stage"] = "quarterfinal"
     assert payout_for_team(active_team, SETTINGS) == 2
+    active_team["best_stage"] = "final"
+    assert payout_for_team(active_team, SETTINGS) == 8
     team = {"status": "eliminated", "exit_stage": "round_of_16"}
     assert payout_for_team(team, SETTINGS) == 1
     team["exit_stage"] = "quarterfinal"
@@ -40,6 +42,18 @@ def test_payout_ladder_for_terminal_stages():
     assert payout_for_team(team, SETTINGS) == 8
     team["exit_stage"] = "winner"
     assert payout_for_team(team, SETTINGS) == 16
+
+
+def test_current_finalists_have_runner_up_money_guaranteed():
+    summaries = {summary["name"]: summary for summary in player_summaries(initial_teams(), SETTINGS)}
+    teams = {team["name"]: team for team in enrich_teams(initial_teams(), SETTINGS)}
+
+    assert teams["Argentina"]["confirmed_payout"] == 8
+    assert teams["Spain"]["confirmed_payout"] == 8
+    assert teams["Argentina"]["possible_payout"] == 16
+    assert teams["Spain"]["possible_payout"] == 16
+    assert summaries["Aman"]["confirmed_winnings"] >= 11
+    assert summaries["Neesha"]["confirmed_winnings"] >= 10
 
 
 def test_rank_performance_title_probability_still_sums_to_one():
