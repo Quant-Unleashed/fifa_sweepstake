@@ -140,7 +140,7 @@ TEAM_FLAGS = {
     "Czechia": "🇨🇿",
     "Ecuador": "🇪🇨",
     "Egypt": "🇪🇬",
-    "England": "🏴",
+    "England": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
     "France": "🇫🇷",
     "Germany": "🇩🇪",
     "Ghana": "🇬🇭",
@@ -466,15 +466,22 @@ def generate_match_alert(match: dict, teams: list[dict], settings: dict) -> dict
 
     scores = score_text(match)
     bullets = []
+    winner = infer_winner(match)
+    loser = losing_team(match, winner) if winner else None
+    stage = match.get("stage")
     for team in involved:
         owner = team["owner"]
-        if team.get("status") == "eliminated":
-            payout = payout_for_team(team, settings)
+        if loser == team["name"]:
+            payout = payout_for_stage("runner_up" if stage == "final" else stage, settings)
             bullets.append(f"{owner}: {team['name']} eliminated, confirmed payout £{payout:g}.")
-        elif match.get("winner") == team["name"]:
-            bullets.append(f"{owner}: {team['name']} won and stays alive.")
+        elif winner == team["name"]:
+            if stage == "final":
+                payout = payout_for_stage("winner", settings)
+                bullets.append(f"{owner}: {team['name']} won the final, confirmed payout £{payout:g}.")
+            else:
+                bullets.append(f"{owner}: {team['name']} won and stays alive.")
         else:
-            bullets.append(f"{owner}: {team['name']} is still marked active.")
+            bullets.append(f"{owner}: {team['name']} result needs review.")
 
     return {
         "id": f"alert-{match['id']}",
@@ -483,6 +490,10 @@ def generate_match_alert(match: dict, teams: list[dict], settings: dict) -> dict
         "body": " ".join(bullets),
         "whatsapp_text": f"{scores}\n\nImpact:\n" + "\n".join(f"- {item}" for item in bullets),
     }
+
+
+def payout_for_stage(stage: str | None, settings: dict) -> float:
+    return money(settings["payouts"].get(stage, 0))
 
 
 def score_text(match: dict) -> str:
@@ -657,7 +668,7 @@ def teams_in_knockout(matches: list[dict]) -> set[str]:
 def teams_in_unfinished_knockout(matches: list[dict]) -> set[str]:
     names = set()
     for match in matches:
-        if match.get("stage") not in KNOCKOUT_STAGES or match_finished(match):
+        if match.get("stage") not in ADVANCEMENT_STAGES or match_finished(match):
             continue
         for side in ("home_team", "away_team"):
             name = match.get(side)

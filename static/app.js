@@ -19,6 +19,7 @@ async function loadDashboard() {
 
 function renderAll() {
   renderSummary();
+  renderFinalsHero();
   renderModelStrip();
   renderMatchSpotlight();
   renderPlayers();
@@ -28,6 +29,56 @@ function renderAll() {
   renderKnockoutDraw();
   renderMatches();
   renderTeams();
+}
+
+function renderFinalsHero() {
+  const finalMatch = matchForStage("final");
+  const thirdPlaceMatch = matchForStage("third_place");
+  if (!finalMatch && !thirdPlaceMatch) {
+    document.querySelector("#finalsHero").innerHTML = "";
+    return;
+  }
+
+  const champion = finalMatch && isFinished(finalMatch) ? finalMatch.winner : null;
+  const runnerUp = champion ? losingTeam(finalMatch, champion) : null;
+  const thirdPlace = thirdPlaceMatch && isFinished(thirdPlaceMatch) ? thirdPlaceMatch.winner : null;
+
+  document.querySelector("#finalsHero").innerHTML = `
+    <div class="finals-copy">
+      <span>Final stretch</span>
+      <h2>${champion ? "Champion confirmed" : "The sweepstake is nearly there"}</h2>
+      <p>${finalMatch ? `${teamLabel(finalMatch.home_team)} vs ${teamLabel(finalMatch.away_team)} in the final` : "Final lineup coming soon"}</p>
+    </div>
+    <div class="podium">
+      ${podiumSlot("Final", champion || finalPair(finalMatch), champion ? "Winner" : "For the trophy", "top")}
+      ${podiumSlot("2nd", runnerUp || "Final runner-up", runnerUp ? "Runner-up" : "Decided after final", "second")}
+      ${podiumSlot("3rd", thirdPlace || finalPair(thirdPlaceMatch), thirdPlace ? "Third place" : "Third-place match", "third")}
+    </div>
+  `;
+}
+
+function podiumSlot(label, value, caption, tone) {
+  return `
+    <article class="podium-slot ${tone}">
+      <span>${label}</span>
+      <strong>${value || "TBC"}</strong>
+      <em>${caption}</em>
+    </article>
+  `;
+}
+
+function finalPair(match) {
+  if (!match) return "TBC";
+  return `${teamLabel(match.home_team)} / ${teamLabel(match.away_team)}`;
+}
+
+function matchForStage(stage) {
+  return dashboard.matches.find((match) => match.stage === stage);
+}
+
+function losingTeam(match, winner) {
+  if (!match || !winner) return null;
+  return [match.home_team, match.away_team].find((team) => team && team !== winner) || null;
 }
 
 function renderMatchSpotlight() {
@@ -99,7 +150,7 @@ function renderPlayers() {
   document.querySelector("#players").innerHTML = dashboard.players
     .map((player) => {
       const chips = player.teams
-        .map((team) => `<span class="chip ${team.status === "eliminated" ? "eliminated" : ""}">${team.flag} ${team.name}</span>`)
+        .map((team) => `<span class="chip ${team.status === "eliminated" ? "eliminated" : ""}">${teamLabel(team.name)}</span>`)
         .join("");
       return `
         <article class="player-card">
@@ -194,7 +245,7 @@ function renderTeams() {
     .sort((a, b) => a.owner.localeCompare(b.owner) || a.name.localeCompare(b.name))
     .map((team) => `
       <tr>
-        <td><strong>${team.flag} ${team.name}</strong></td>
+        <td><strong>${teamLabel(team.name)}</strong></td>
         <td>${team.owner}</td>
         <td>${team.group}</td>
         <td><span class="status ${team.status}">${team.status}</span>${team.exit_stage ? `<br><span class="muted">${stageLabel(team.exit_stage)}</span>` : ""}</td>
@@ -241,7 +292,7 @@ function standingsTable(group) {
           ${rows.map((row) => `
             <tr>
               <td>${row.position}</td>
-              <td><strong>${row.flag} ${row.team}</strong><br><span class="muted">${row.owner}</span></td>
+              <td><strong>${teamLabel(row.team)}</strong><br><span class="muted">${row.owner}</span></td>
               <td>${row.played}</td>
               <td>${row.won}</td>
               <td>${row.drawn}</td>

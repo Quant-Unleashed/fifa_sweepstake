@@ -91,6 +91,29 @@ def test_finished_match_generates_alert():
     assert "Aman" in alert["body"]
 
 
+def test_match_alert_uses_match_outcome_not_current_team_status():
+    teams = initial_teams()
+    england = next(team for team in teams if team["name"] == "England")
+    england["status"] = "eliminated"
+    england["exit_stage"] = "semifinal"
+    match = {
+        "id": "m998",
+        "stage": "round_of_16",
+        "home_team": "Mexico",
+        "away_team": "England",
+        "home_score": 2,
+        "away_score": 3,
+        "winner": "England",
+        "status": "finished",
+    }
+
+    alert = generate_match_alert(match, teams, SETTINGS)
+
+    assert alert is not None
+    assert "England won and stays alive" in alert["body"]
+    assert "Mexico eliminated, confirmed payout £1" in alert["body"]
+
+
 def test_group_standings_include_points_goal_difference_and_position():
     teams = initial_teams()
     matches = initial_matches()
@@ -190,7 +213,7 @@ def test_decisive_scores_override_stale_winner_and_advance_open_semifinal_slot()
     assert switzerland["exit_stage"] == "quarterfinal"
     assert argentina["status"] == "active"
     assert argentina["exit_stage"] is None
-    assert argentina["best_stage"] == "semifinal"
+    assert argentina["best_stage"] == "final"
     assert next_match["away_team"] == "Argentina"
 
 
@@ -221,7 +244,7 @@ def test_confirmed_quarterfinal_order_is_preserved_during_reconciliation():
     assert (quarterfinals["m098"]["home_team"], quarterfinals["m098"]["away_team"]) == ("Spain", "Belgium")
     assert (quarterfinals["m099"]["home_team"], quarterfinals["m099"]["away_team"]) == ("Norway", "England")
     assert (semifinals["m101"]["home_team"], semifinals["m101"]["away_team"]) == ("France", "Spain")
-    assert (semifinals["m102"]["home_team"], semifinals["m102"]["away_team"]) == ("England", "Semifinal team 2B")
+    assert (semifinals["m102"]["home_team"], semifinals["m102"]["away_team"]) == ("England", "Argentina")
 
 
 def test_current_tournament_reconciliation_is_idempotent():
@@ -236,21 +259,21 @@ def test_final_result_confirms_runner_up_and_winner_payouts():
     teams = initial_teams()
     matches = initial_matches()
     final = next(item for item in matches if item["stage"] == "final")
-    final["home_team"] = "Argentina"
-    final["away_team"] = "France"
+    final["home_team"] = "Spain"
+    final["away_team"] = "Argentina"
     final["status"] = "finished"
     final["home_score"] = 3
     final["away_score"] = 1
 
     apply_tournament_results(matches, teams)
 
+    spain = next(team for team in teams if team["name"] == "Spain")
     argentina = next(team for team in teams if team["name"] == "Argentina")
-    france = next(team for team in teams if team["name"] == "France")
-    assert argentina["exit_stage"] == "winner"
-    assert france["status"] == "eliminated"
-    assert france["exit_stage"] == "runner_up"
-    assert payout_for_team(argentina, SETTINGS) == 16
-    assert payout_for_team(france, SETTINGS) == 8
+    assert spain["exit_stage"] == "winner"
+    assert argentina["status"] == "eliminated"
+    assert argentina["exit_stage"] == "runner_up"
+    assert payout_for_team(spain, SETTINGS) == 16
+    assert payout_for_team(argentina, SETTINGS) == 8
 
 
 def test_dashboard_payload_formats_full_utc_kickoff_in_bst():

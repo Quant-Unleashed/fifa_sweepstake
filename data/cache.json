@@ -1,6 +1,6 @@
 {
   "provider": "manual",
-  "last_sync": "2026-07-12T00:30:00+01:00",
-  "message": "Manual results loaded through the completed July 11 quarterfinals. Configure FOOTBALL_PROVIDER=football-data and FOOTBALL_DATA_API_KEY for live sync.",
-  "raw_count": 28
+  "last_sync": "2026-07-16T09:00:00+01:00",
+  "message": "Manual results loaded through the completed July 15 semifinals. Configure FOOTBALL_PROVIDER=football-data and FOOTBALL_DATA_API_KEY for live sync.",
+  "raw_count": 30
 }

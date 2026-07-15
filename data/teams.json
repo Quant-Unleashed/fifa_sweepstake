@@ -19,7 +19,7 @@
     "group_position": 1,
     "status": "active",
     "exit_stage": null,
-    "best_stage": "quarterfinal",
+    "best_stage": "final",
     "manual_title_probability": null,
     "notes": ""
   },
@@ -185,8 +185,8 @@
     "owner": "Antonie",
     "group": "I",
     "group_position": 1,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "semifinal",
     "best_stage": "semifinal",
     "manual_title_probability": null,
     "notes": ""
@@ -353,8 +353,8 @@
     "owner": "Chris",
     "group": "L",
     "group_position": 1,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "semifinal",
     "best_stage": "semifinal",
     "manual_title_probability": null,
     "notes": ""
@@ -401,8 +401,8 @@
     "owner": "Chris",
     "group": "B",
     "group_position": 4,
-    "status": "active",
-    "exit_stage": null,
+    "status": "eliminated",
+    "exit_stage": "quarterfinal",
     "best_stage": "quarterfinal",
     "manual_title_probability": null,
     "notes": ""
@@ -559,7 +559,7 @@
     "group_position": 1,
     "status": "active",
     "exit_stage": null,
-    "best_stage": "semifinal",
+    "best_stage": "final",
     "manual_title_probability": null,
     "notes": ""
   },

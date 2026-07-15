@@ -112,7 +112,7 @@ def test_round_of_32_winners_advance_to_confirmed_round_of_16_bracket():
     assert (round_of_16["m096"]["home_team"], round_of_16["m096"]["away_team"]) == ("Switzerland", "Colombia")
 
 
-def test_seed_results_loaded_through_completed_july_11_quarterfinals():
+def test_seed_results_loaded_through_completed_july_15_semifinals():
     matches = {match["id"]: match for match in initial_matches()}
 
     assert matches["m082"]["home_score"] == 2
@@ -125,7 +125,11 @@ def test_seed_results_loaded_through_completed_july_11_quarterfinals():
     assert matches["m097"]["winner"] == "France"
     assert matches["m098"]["winner"] == "Spain"
     assert matches["m099"]["winner"] == "England"
-    assert matches["m100"]["status"] == "scheduled"
+    assert matches["m100"]["winner"] == "Argentina"
+    assert matches["m100"]["status"] == "finished"
     assert matches["m101"]["date"] == "2026-07-14T19:00:00Z"
+    assert matches["m101"]["winner"] == "Spain"
     assert matches["m102"]["date"] == "2026-07-15T19:00:00Z"
+    assert matches["m102"]["away_team"] == "Argentina"
+    assert matches["m102"]["winner"] == "Argentina"
     assert matches["m104"]["date"] == "2026-07-19T19:00:00Z"
